@@ -44,6 +44,12 @@ export const setApiToken = (token: string | null) => {
   currentToken = token;
 };
 
+let onUnauthorized: (() => void) | null = null;
+
+export const setUnauthorizedHandler = (handler: (() => void) | null) => {
+  onUnauthorized = handler;
+};
+
 // Request interceptor to attach access token
 api.interceptors.request.use(
   (config) => {
@@ -89,11 +95,13 @@ api.interceptors.response.use(
         }
         return api(originalRequest);
       } catch (refreshError) {
-        // Refresh failed (token expired or invalid)
-        // We should dispatch logout here or let the UI handle it.
-        // For now, clear token.
         setApiToken(null);
-        return Promise.reject(refreshError);
+
+        if (onUnauthorized) {
+          onUnauthorized();
+        }
+
+        return Promise.reject(error);
       }
     }
 

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { 
   TrendingUp, 
   LayoutDashboard, 
@@ -17,6 +17,9 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useEffect, useState } from "react"
+import api, { setApiToken } from "@/lib/api"
+import { logout } from "@/lib/features/auth/authSlice"
+import { useAppDispatch } from "@/lib/store/hooks"
 
 const investorNavItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -48,6 +51,8 @@ export function DashboardLayout({
   userRole = "Investor"
 }: DashboardLayoutProps) {
   const pathname = usePathname()
+  const router = useRouter()
+  const dispatch = useAppDispatch()
   const [currentAdminTab, setCurrentAdminTab] = useState("overview")
   const [sidebarOpen, setSidebarOpen] = useState(false)
   
@@ -59,6 +64,19 @@ export function DashboardLayout({
     const params = new URLSearchParams(window.location.search)
     setCurrentAdminTab(params.get("tab") || "overview")
   }, [pathname, type])
+
+  const handleLogout = async () => {
+    try {
+      await api.post("/auth/logout")
+    } catch {
+      // Local state still needs to be cleared when the server session is already gone.
+    } finally {
+      setApiToken(null)
+      dispatch(logout())
+      setSidebarOpen(false)
+      router.replace("/login")
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -112,6 +130,7 @@ export function DashboardLayout({
               <p className="text-xs text-muted-foreground">{userRole}</p>
             </div>
             <button 
+              onClick={handleLogout}
               className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
               aria-label="Log out"
             >
@@ -182,6 +201,13 @@ export function DashboardLayout({
                   <p className="text-sm font-medium text-foreground truncate">{userName}</p>
                   <p className="text-xs text-muted-foreground">{userRole}</p>
                 </div>
+                <button
+                  onClick={handleLogout}
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                  aria-label="Log out"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
               </div>
             </div>
           </aside>

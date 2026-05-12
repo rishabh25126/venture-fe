@@ -129,7 +129,7 @@ export function CreateUserDialog({ isOpen, onClose }: CreateUserDialogProps) {
                     className="w-full" 
                     disabled={createUser.isPending}
                   >
-                    {createUser.isPending ? "Creating..." : "Create User"}
+                    {createUser.isPending ? "Creating..." : "Create Investor"}
                   </Button>
                 </div>
               </form>

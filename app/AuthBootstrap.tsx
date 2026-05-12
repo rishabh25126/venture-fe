@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import axios from "axios";
-import { apiBaseUrl, setApiToken } from "@/lib/api";
+import { apiBaseUrl, setApiToken, setUnauthorizedHandler } from "@/lib/api";
 import { setCredentials, setLoading, logout } from "@/lib/features/auth/authSlice";
 import { useAppDispatch } from "@/lib/store/hooks";
 
@@ -11,6 +11,13 @@ export default function AuthBootstrap() {
 
   useEffect(() => {
     let cancelled = false;
+
+    setUnauthorizedHandler(() => {
+      if (cancelled) return;
+
+      setApiToken(null);
+      dispatch(logout());
+    });
 
     async function restoreSession() {
       dispatch(setLoading(true));
@@ -43,6 +50,7 @@ export default function AuthBootstrap() {
 
     return () => {
       cancelled = true;
+      setUnauthorizedHandler(null);
     };
   }, [dispatch]);
 
