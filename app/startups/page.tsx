@@ -33,6 +33,7 @@ export default function StartupsPage() {
         stage: s.stage,
         fundingAsk: `₹${(s.fundingAsk / 10000000).toFixed(0)}Cr`,
         fundingAskNum: s.fundingAsk,
+        revenueRange: s.metrics?.revenueRange || 'TBD',
         growth: s.metrics?.growthPercent || 0,
         fundingProgress: 0,
       }));
