@@ -28,10 +28,10 @@ const investorNavItems = [
 
 const adminNavItems = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
-  { label: "Startups", href: "/admin/startups", icon: Briefcase },
-  { label: "Investors", href: "/admin/investors", icon: TrendingUp },
-  { label: "Analytics", href: "/admin/analytics", icon: TrendingUp },
-  { label: "Settings", href: "/admin/settings", icon: Settings },
+  { label: "Startups", href: "/admin", icon: Briefcase },
+  { label: "Investors", href: "/admin", icon: TrendingUp },
+  { label: "Analytics", href: "/admin", icon: TrendingUp },
+  { label: "Settings", href: "/admin", icon: Settings },
 ]
 
 interface DashboardLayoutProps {

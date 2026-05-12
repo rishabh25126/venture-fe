@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { 
   Building2, 
   Users, 
@@ -18,51 +17,95 @@ import {
 import { DashboardLayout } from "@/components/dashboard-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { startups } from "@/lib/data"
+import { startups as dummyStartups } from "@/lib/data"
 import { cn } from "@/lib/utils"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import api from "@/lib/api"
+import { useAppSelector } from "@/lib/store/hooks"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { CreateUserDialog } from "@/components/create-user-dialog"
+import { AssignEquityDialog } from "@/components/assign-equity-dialog"
 
 const tabs = ["Startups", "Investors", "Pending Approvals"]
 
-// Mock investors data
-const investors = [
-  { id: "1", name: "Aditya Sharma", email: "aditya@example.com", companies: 4, lastLogin: "2 hours ago", status: "active" },
-  { id: "2", name: "Meera Kapoor", email: "meera@example.com", companies: 6, lastLogin: "1 day ago", status: "active" },
-  { id: "3", name: "Raj Krishnamurthy", email: "raj@example.com", companies: 3, lastLogin: "3 days ago", status: "active" },
-  { id: "4", name: "Sunita Reddy", email: "sunita@example.com", companies: 5, lastLogin: "1 week ago", status: "inactive" },
-  { id: "5", name: "Vikram Malhotra", email: "vikram@example.com", companies: 2, lastLogin: "5 hours ago", status: "active" },
-]
-
-const pendingApprovals = [
-  { id: "1", type: "New Startup", name: "TechFlow AI", requestedBy: "Admin", date: "Aug 5, 2024" },
-  { id: "2", type: "Document Upload", name: "Q3 Financials - PayStack AI", requestedBy: "PayStack AI", date: "Aug 4, 2024" },
-  { id: "3", type: "Investor Access", name: "Vikram Malhotra → MediSync", requestedBy: "Vikram Malhotra", date: "Aug 3, 2024" },
-]
-
-const sectorColors: Record<string, { bg: string; text: string }> = {
-  Fintech: { bg: "bg-[#1E3A5F]", text: "text-[#60A5FA]" },
-  HealthTech: { bg: "bg-[#14432A]", text: "text-[#34D399]" },
-  EdTech: { bg: "bg-[#3D1F5C]", text: "text-[#A78BFA]" },
-  SaaS: { bg: "bg-[#3B2A00]", text: "text-[#FCD34D]" },
-  "E-commerce": { bg: "bg-[#3B0A0A]", text: "text-[#FCA5A5]" },
-  AI: { bg: "bg-[#1E3A5F]", text: "text-[#60A5FA]" },
-  CleanTech: { bg: "bg-[#14432A]", text: "text-[#34D399]" },
-}
-
 export default function AdminPage() {
+  const { user } = useAppSelector((state) => state.auth)
+  const router = useRouter()
+  const queryClient = useQueryClient()
+
+  useEffect(() => {
+    if (user?.role === 'investor') {
+      router.push('/dashboard')
+    }
+  }, [user, router])
+
   const [activeTab, setActiveTab] = useState("Startups")
   const [searchQuery, setSearchQuery] = useState("")
-  const [startupVisibility, setStartupVisibility] = useState<Record<string, boolean>>(
-    Object.fromEntries(startups.map((s) => [s.id, true]))
-  )
+  const [isCreateUserOpen, setIsCreateUserOpen] = useState(false)
+  const [isAssignEquityOpen, setIsAssignEquityOpen] = useState(false)
+  const [selectedInvestorId, setSelectedInvestorId] = useState<string | undefined>(undefined)
+
+  // Fetch Startups
+  const { data: startups = [] } = useQuery({
+    queryKey: ['admin-startups'],
+    queryFn: async () => {
+      const res = await api.get('/startups?limit=100')
+      return res.data.data.startups
+    }
+  })
+
+  // Fetch Investors
+  const { data: investors = [] } = useQuery({
+    queryKey: ['admin-investors'],
+    queryFn: async () => {
+      const res = await api.get('/admin/users')
+      // Only show investors, format them for UI
+      return res.data.data.investors.map((u: any) => ({
+        id: u._id,
+        name: u.name,
+        email: u.email,
+        companies: 0, // Placeholder
+        lastLogin: new Date(u.createdAt).toLocaleDateString(),
+        status: u.isActive ? 'active' : 'inactive'
+      }))
+    }
+  })
+
+  // Fetch Pending Approvals
+  const { data: pendingApprovals = [] } = useQuery({
+    queryKey: ['admin-requests'],
+    queryFn: async () => {
+      const res = await api.get('/requests/admin/pending')
+      return res.data.data.requests.map((r: any) => ({
+        id: r._id,
+        type: r.type === 'NEW_INVESTMENT' ? 'New Investment' : 'Equity Revision',
+        name: r.startupId.name,
+        requestedBy: r.investorId.name,
+        date: new Date(r.createdAt).toLocaleDateString()
+      }))
+    }
+  })
+
+  const handleRequestMutation = useMutation({
+    mutationFn: async ({ id, status }: { id: string, status: 'APPROVED' | 'REJECTED' }) => {
+      await api.patch(`/requests/admin/${id}`, { status })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-requests'] })
+    }
+  })
+
+  const [startupVisibility, setStartupVisibility] = useState<Record<string, boolean>>({})
 
   const filteredStartups = startups.filter(
-    (s) =>
+    (s: any) =>
       s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       s.sector.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   const filteredInvestors = investors.filter(
-    (i) =>
+    (i: any) =>
       i.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       i.email.toLowerCase().includes(searchQuery.toLowerCase())
   )
@@ -72,7 +115,7 @@ export default function AdminPage() {
   }
 
   return (
-    <DashboardLayout type="admin" userName="Admin User" userRole="Administrator">
+    <DashboardLayout type="admin" userName={user?.name || "Admin"} userRole="Administrator">
       <div className="p-6 lg:p-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
@@ -80,11 +123,22 @@ export default function AdminPage() {
             <h1 className="text-2xl font-bold text-foreground">Admin Panel</h1>
             <p className="text-muted-foreground">Manage startups, investors, and platform settings</p>
           </div>
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            Add New Startup
-          </Button>
+          <div className="flex items-center gap-3">
+            {activeTab === "Investors" && (
+              <Button variant="outline" onClick={() => setIsCreateUserOpen(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Create Investor
+              </Button>
+            )}
+            <Button onClick={() => setIsAssignEquityOpen(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Assign Equity
+            </Button>
+          </div>
         </div>
+
+        <CreateUserDialog isOpen={isCreateUserOpen} onClose={() => setIsCreateUserOpen(false)} />
+        <AssignEquityDialog isOpen={isAssignEquityOpen} onClose={() => setIsAssignEquityOpen(false)} preselectedInvestorId={selectedInvestorId} />
 
         {/* Stats Overview */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -96,7 +150,9 @@ export default function AdminPage() {
           ].map((stat) => (
             <div key={stat.label} className="gradient-card rounded-xl border border-border p-5">
               <stat.icon className={cn("w-5 h-5 mb-3", stat.color)} />
-              <p className="text-2xl font-bold text-foreground tabular-nums">{stat.value}</p>
+              <p className="text-2xl font-bold text-foreground tabular-nums">
+                {stat.label.includes("Investors") && investors.length === 0 ? "..." : stat.value}
+              </p>
               <p className="text-sm text-muted-foreground">{stat.label}</p>
             </div>
           ))}
@@ -159,11 +215,11 @@ export default function AdminPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredStartups.map((startup) => {
-                    const sectorStyle = sectorColors[startup.sector] || { bg: "bg-secondary", text: "text-muted-foreground" }
-                    const isVisible = startupVisibility[startup.id]
+                  {filteredStartups.map((startup: any) => {
+                    const sectorStyle = { bg: "bg-[#1E3A5F]", text: "text-[#60A5FA]" } // Fallback style
+                    const isVisible = true // Backend doesn't support hide/show toggle yet
                     return (
-                      <tr key={startup.id} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
+                      <tr key={startup.slug || startup._id} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-lg">
@@ -194,9 +250,8 @@ export default function AdminPage() {
                         <td className="p-4">
                           <div className="flex items-center justify-end gap-2">
                             <button
-                              onClick={() => toggleVisibility(startup.id)}
                               className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-                              title={isVisible ? "Hide startup" : "Show startup"}
+                              title="Visibility toggle (coming soon)"
                             >
                               {isVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                             </button>
@@ -233,7 +288,7 @@ export default function AdminPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredInvestors.map((investor) => (
+                  {filteredInvestors.map((investor: any) => (
                     <tr key={investor.id} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
                       <td className="p-4">
                         <div className="flex items-center gap-3">
@@ -258,8 +313,14 @@ export default function AdminPage() {
                       </td>
                       <td className="p-4">
                         <div className="flex items-center justify-end gap-2">
-                          <button className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors">
-                            <Edit className="w-4 h-4" />
+                          <button 
+                            onClick={() => {
+                              setSelectedInvestorId(investor.id)
+                              setIsAssignEquityOpen(true)
+                            }}
+                            className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border text-foreground hover:bg-secondary transition-colors"
+                          >
+                            Assign Equity
                           </button>
                           <button className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors">
                             <MoreHorizontal className="w-4 h-4" />
@@ -286,7 +347,7 @@ export default function AdminPage() {
                 <p className="text-muted-foreground">All caught up! New requests will appear here.</p>
               </div>
             ) : (
-              pendingApprovals.map((approval) => (
+              pendingApprovals.map((approval: any) => (
                 <div key={approval.id} className="gradient-card rounded-xl border border-border p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 rounded-full bg-[#F59E0B]/10 flex items-center justify-center">
@@ -299,10 +360,19 @@ export default function AdminPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 ml-14 sm:ml-0">
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleRequestMutation.mutate({ id: approval.id, status: 'REJECTED' })}
+                      disabled={handleRequestMutation.isPending}
+                    >
                       Reject
                     </Button>
-                    <Button size="sm">
+                    <Button 
+                      size="sm"
+                      onClick={() => handleRequestMutation.mutate({ id: approval.id, status: 'APPROVED' })}
+                      disabled={handleRequestMutation.isPending}
+                    >
                       Approve
                     </Button>
                   </div>

@@ -1,21 +1,17 @@
 "use client"
 
 import Link from "next/link"
-import { 
-  ArrowUpRight, 
-  ArrowDownRight, 
-  TrendingUp, 
-  Briefcase, 
-  PercentIcon,
-  Building2,
-  Bell,
-  Calendar,
-  FileText
-} from "lucide-react"
+import { Calendar, FileText, Bell, TrendingUp, Briefcase, PercentIcon, Building2, ArrowUpRight, ArrowDownRight } from "lucide-react"
 import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts"
 import { DashboardLayout } from "@/components/dashboard-layout"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { useQuery } from "@tanstack/react-query"
+import api from "@/lib/api"
+import { useAppSelector } from "@/lib/store/hooks"
+import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import { RequestEquityDialog } from "@/components/request-equity-dialog"
 
 // Mock investor portfolio data
 const portfolioData = {
@@ -25,44 +21,7 @@ const portfolioData = {
   activeCompanies: 6,
 }
 
-const portfolioCompanies = [
-  { 
-    id: "paystack-ai",
-    name: "PayStack AI", 
-    sector: "Fintech", 
-    invested: "₹2.5Cr", 
-    currentValue: "₹4.8Cr", 
-    change: 92,
-    logo: "💳"
-  },
-  { 
-    id: "medisync",
-    name: "MediSync", 
-    sector: "HealthTech", 
-    invested: "₹1.2Cr", 
-    currentValue: "₹2.1Cr", 
-    change: 75,
-    logo: "🏥"
-  },
-  { 
-    id: "cloudscale",
-    name: "CloudScale", 
-    sector: "SaaS", 
-    invested: "₹3Cr", 
-    currentValue: "₹4.5Cr", 
-    change: 50,
-    logo: "☁️"
-  },
-  { 
-    id: "quickkart",
-    name: "QuickKart", 
-    sector: "E-commerce", 
-    invested: "₹1.8Cr", 
-    currentValue: "₹2.8Cr", 
-    change: 56,
-    logo: "🛒"
-  },
-]
+// Portfolio companies fetched from API
 
 const portfolioHistory = [
   { month: "Jan", value: 8.5 },
@@ -106,8 +65,39 @@ const upcomingEvents = [
 ]
 
 export default function DashboardPage() {
+  const { user } = useAppSelector((state) => state.auth)
+  const router = useRouter()
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
+
+  useEffect(() => {
+    if (user?.role === 'admin') {
+      router.push('/admin')
+    }
+  }, [user, router])
+
   const currentHour = new Date().getHours()
   const greeting = currentHour < 12 ? "Good morning" : currentHour < 18 ? "Good afternoon" : "Good evening"
+
+  const { data: portfolioCompanies = [], isLoading } = useQuery({
+    queryKey: ['my-startups'],
+    queryFn: async () => {
+      // Admin users don't have investor access records, so this returns empty unless we handle it
+      const res = await api.get('/access/my-startups');
+      return res.data.data.startups.map((s: any) => ({
+        id: s.startup.slug,
+        name: s.startup.name,
+        sector: s.startup.sector,
+        invested: `₹${(s.investedAmount / 100000).toFixed(2)}L`,
+        shares: s.shares,
+        equity: `${s.equityPercentage}%`,
+        currentValue: "TBD", // To be implemented dynamically later
+        change: 0,
+        logo: s.startup.logo || '🏢'
+      }));
+    },
+    // Only fetch if logged in
+    enabled: !!user
+  });
 
   return (
     <DashboardLayout>
@@ -115,14 +105,21 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{greeting}, Aditya</h1>
+            <h1 className="text-2xl font-bold text-foreground">{greeting}, {user?.name || 'Investor'}</h1>
             <p className="text-muted-foreground">Here&apos;s your portfolio overview</p>
           </div>
-          <Button variant="outline" className="sm:w-auto">
-            <Bell className="w-4 h-4 mr-2" />
-            3 Notifications
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button variant="outline" className="hidden sm:flex">
+              <Bell className="w-4 h-4 mr-2" />
+              Alerts
+            </Button>
+            <Button onClick={() => setIsRequestModalOpen(true)}>
+              Request Allocation
+            </Button>
+          </div>
         </div>
+
+        <RequestEquityDialog isOpen={isRequestModalOpen} onClose={() => setIsRequestModalOpen(false)} />
 
         {/* Metric Tiles */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -219,13 +216,27 @@ export default function DashboardPage() {
                       <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider pb-3">Company</th>
                       <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider pb-3">Sector</th>
                       <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider pb-3">Invested</th>
-                      <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider pb-3">Current Value</th>
+                      <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider pb-3">Equity</th>
                       <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider pb-3">Change</th>
                       <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider pb-3"></th>
                     </tr>
                   </thead>
                   <tbody>
-                    {portfolioCompanies.map((company) => (
+                    {portfolioCompanies.length === 0 && !isLoading && (
+                      <tr>
+                        <td colSpan={6} className="py-8 text-center text-muted-foreground">
+                          No investments found. Request access to startups to see them here.
+                        </td>
+                      </tr>
+                    )}
+                    {isLoading && (
+                      <tr>
+                        <td colSpan={6} className="py-8 text-center text-primary animate-pulse">
+                          Loading portfolio...
+                        </td>
+                      </tr>
+                    )}
+                    {portfolioCompanies.map((company: any) => (
                       <tr key={company.id} className="border-b border-border last:border-0 hover:bg-secondary/50 transition-colors">
                         <td className="py-4">
                           <div className="flex items-center gap-3">
@@ -237,7 +248,7 @@ export default function DashboardPage() {
                         </td>
                         <td className="py-4 text-sm text-muted-foreground">{company.sector}</td>
                         <td className="py-4 text-right text-sm tabular-nums text-foreground">{company.invested}</td>
-                        <td className="py-4 text-right text-sm tabular-nums text-foreground">{company.currentValue}</td>
+                        <td className="py-4 text-right text-sm tabular-nums text-foreground">{company.equity}</td>
                         <td className="py-4 text-right">
                           <span className={cn(
                             "text-sm font-medium tabular-nums flex items-center justify-end gap-0.5",

@@ -9,7 +9,7 @@ import { logout } from './features/auth/authSlice';
 // A common approach is passing the token in the interceptor:
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || '/backend',
   withCredentials: true, // Send httpOnly cookies (refresh token) with requests
   headers: {
     'Content-Type': 'application/json',
@@ -41,14 +41,19 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // If error is 401 and we haven't retried yet
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // If error is 401, not on an auth route, and we haven't retried yet
+    if (
+      error.response?.status === 401 && 
+      !originalRequest._retry &&
+      !originalRequest.url?.includes('/auth/login') &&
+      !originalRequest.url?.includes('/auth/refresh')
+    ) {
       originalRequest._retry = true;
 
       try {
         // Attempt to refresh token using httpOnly cookie
         const res = await axios.post(
-          `${api.defaults.baseURL}/auth/refresh`,
+          `${process.env.NEXT_PUBLIC_API_URL || '/backend'}/auth/refresh`,
           {},
           { withCredentials: true }
         );

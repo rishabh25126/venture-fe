@@ -7,8 +7,10 @@ import { Footer } from "@/components/footer"
 import { StartupCard } from "@/components/startup-card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { startups, sectors, stages } from "@/lib/data"
+import { sectors, stages } from "@/lib/data"
 import { cn } from "@/lib/utils"
+import { useQuery } from "@tanstack/react-query"
+import api from "@/lib/api"
 
 export default function StartupsPage() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -17,8 +19,29 @@ export default function StartupsPage() {
   const [sortBy, setSortBy] = useState<string>("recent")
   const [showFilters, setShowFilters] = useState(false)
 
+  const { data: fetchedStartups = [], isLoading, error } = useQuery({
+    queryKey: ['startups'],
+    queryFn: async () => {
+      const res = await api.get('/startups?limit=50');
+      // Map backend schema to frontend Startup interface
+      return res.data.data.startups.map((s: any) => ({
+        id: s.slug,
+        name: s.name,
+        tagline: s.tagline,
+        logo: s.logo || '🏢',
+        sector: s.sector,
+        stage: s.stage,
+        fundingAsk: `₹${(s.fundingAsk / 10000000).toFixed(0)}Cr`,
+        fundingAskNum: s.fundingAsk,
+        growth: s.metrics?.growthPercent || 0,
+        fundingProgress: 0,
+      }));
+    }
+  });
+
+
   const filteredStartups = useMemo(() => {
-    let result = [...startups]
+    let result = [...fetchedStartups]
 
     // Search filter
     if (searchQuery) {
@@ -299,9 +322,12 @@ export default function StartupsPage() {
               )}
 
               {/* Results count */}
-              <p className="text-sm text-muted-foreground mb-6">
-                Showing {filteredStartups.length} startup{filteredStartups.length !== 1 ? "s" : ""}
-              </p>
+              <div className="flex items-center justify-between mb-6">
+                <p className="text-sm text-muted-foreground">
+                  Showing {filteredStartups.length} startup{filteredStartups.length !== 1 ? "s" : ""}
+                </p>
+                {isLoading && <span className="text-sm text-primary animate-pulse">Loading updates...</span>}
+              </div>
 
               {/* Startup Grid */}
               {filteredStartups.length > 0 ? (
