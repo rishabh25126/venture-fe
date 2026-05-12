@@ -3,6 +3,12 @@ import axios from 'axios';
 const DEFAULT_PRODUCTION_API_URL = 'https://venture-be.vercel.app/api';
 
 function getApiBaseUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_API_URL?.trim();
+
+  if (explicit) {
+    return explicit.replace(/\/$/, '');
+  }
+
   const isDev =
     process.env.NODE_ENV === 'development' ||
     process.env.NEXT_PUBLIC_APP_ENV === 'development';
@@ -11,15 +17,10 @@ function getApiBaseUrl(): string {
     return '/backend';
   }
 
-  const explicit = process.env.NEXT_PUBLIC_API_URL?.trim();
-  if (explicit) {
-    return explicit.replace(/\/$/, '');
-  }
-
   return DEFAULT_PRODUCTION_API_URL;
 }
 
-const apiBaseUrl = getApiBaseUrl();
+export const apiBaseUrl = getApiBaseUrl();
 
 // We need a reference to the store to dispatch logout on 401
 // In Next.js App Router, we'll access the Redux state via hooks in components,

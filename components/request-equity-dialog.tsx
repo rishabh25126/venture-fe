@@ -117,7 +117,7 @@ export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProp
                     >
                       <option value="">Select a company...</option>
                       {startups.map((s: any) => (
-                        <option key={s.slug} value={s.slug}>
+                        <option key={s._id} value={s._id}>
                           {s.name}
                         </option>
                       ))}

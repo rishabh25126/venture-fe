@@ -16,7 +16,7 @@ import {
   Bell
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 const investorNavItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -27,11 +27,11 @@ const investorNavItems = [
 ]
 
 const adminNavItems = [
-  { label: "Overview", href: "/admin", icon: LayoutDashboard },
-  { label: "Startups", href: "/admin", icon: Briefcase },
-  { label: "Investors", href: "/admin", icon: TrendingUp },
-  { label: "Analytics", href: "/admin", icon: TrendingUp },
-  { label: "Settings", href: "/admin", icon: Settings },
+  { label: "Overview", href: "/admin?tab=overview", icon: LayoutDashboard, tab: "overview" },
+  { label: "Startups", href: "/admin?tab=startups", icon: Briefcase, tab: "startups" },
+  { label: "Investors", href: "/admin?tab=investors", icon: TrendingUp, tab: "investors" },
+  { label: "Analytics", href: "/admin?tab=analytics", icon: TrendingUp, tab: "analytics" },
+  { label: "Settings", href: "/admin?tab=settings", icon: Settings, tab: "settings" },
 ]
 
 interface DashboardLayoutProps {
@@ -48,9 +48,17 @@ export function DashboardLayout({
   userRole = "Investor"
 }: DashboardLayoutProps) {
   const pathname = usePathname()
+  const [currentAdminTab, setCurrentAdminTab] = useState("overview")
   const [sidebarOpen, setSidebarOpen] = useState(false)
   
   const navItems = type === "admin" ? adminNavItems : investorNavItems
+
+  useEffect(() => {
+    if (type !== "admin") return
+
+    const params = new URLSearchParams(window.location.search)
+    setCurrentAdminTab(params.get("tab") || "overview")
+  }, [pathname, type])
 
   return (
     <div className="min-h-screen bg-background">
@@ -69,7 +77,9 @@ export function DashboardLayout({
         {/* Navigation */}
         <nav className="flex-1 px-3 py-4 space-y-1">
           {navItems.map((item) => {
-            const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
+            const isActive = type === "admin"
+              ? pathname === "/admin" && currentAdminTab === item.tab
+              : pathname === item.href || pathname.startsWith(item.href + "/")
             return (
               <Link
                 key={item.href}
@@ -142,7 +152,9 @@ export function DashboardLayout({
           <aside className="lg:hidden fixed right-0 top-16 bottom-0 w-72 bg-card border-l border-border z-50 flex flex-col">
             <nav className="flex-1 px-3 py-4 space-y-1">
               {navItems.map((item) => {
-                const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
+                const isActive = type === "admin"
+                  ? pathname === "/admin" && currentAdminTab === item.tab
+                  : pathname === item.href || pathname.startsWith(item.href + "/")
                 return (
                   <Link
                     key={item.href}

@@ -65,7 +65,7 @@ const upcomingEvents = [
 ]
 
 export default function DashboardPage() {
-  const { user } = useAppSelector((state) => state.auth)
+  const { user, isLoading: authLoading } = useAppSelector((state) => state.auth)
   const router = useRouter()
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
 
@@ -73,7 +73,10 @@ export default function DashboardPage() {
     if (user?.role === 'admin') {
       router.push('/admin')
     }
-  }, [user, router])
+    if (!authLoading && !user) {
+      router.push('/login')
+    }
+  }, [authLoading, user, router])
 
   const currentHour = new Date().getHours()
   const greeting = currentHour < 12 ? "Good morning" : currentHour < 18 ? "Good afternoon" : "Good evening"
@@ -96,8 +99,16 @@ export default function DashboardPage() {
       }));
     },
     // Only fetch if logged in
-    enabled: !!user
+    enabled: !authLoading && user?.role === 'investor'
   });
+
+  if (authLoading) {
+    return (
+      <DashboardLayout>
+        <div className="p-6 lg:p-8 text-muted-foreground">Loading investor session...</div>
+      </DashboardLayout>
+    )
+  }
 
   return (
     <DashboardLayout>

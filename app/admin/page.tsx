@@ -17,34 +17,51 @@ import {
 import { DashboardLayout } from "@/components/dashboard-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { startups as dummyStartups } from "@/lib/data"
 import { cn } from "@/lib/utils"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import api from "@/lib/api"
 import { useAppSelector } from "@/lib/store/hooks"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { CreateUserDialog } from "@/components/create-user-dialog"
 import { AssignEquityDialog } from "@/components/assign-equity-dialog"
 
-const tabs = ["Startups", "Investors", "Pending Approvals"]
+const tabs = ["Overview", "Startups", "Investors", "Pending Approvals", "Analytics", "Settings"]
+const ADMIN_TAB_MAP: Record<string, string> = {
+  overview: "Overview",
+  startups: "Startups",
+  investors: "Investors",
+  analytics: "Analytics",
+  settings: "Settings",
+}
 
 export default function AdminPage() {
-  const { user } = useAppSelector((state) => state.auth)
+  const { user, isLoading: authLoading } = useAppSelector((state) => state.auth)
   const router = useRouter()
+  const pathname = usePathname()
   const queryClient = useQueryClient()
 
   useEffect(() => {
     if (user?.role === 'investor') {
       router.push('/dashboard')
     }
-  }, [user, router])
+    if (!authLoading && !user) {
+      router.push('/login')
+    }
+  }, [authLoading, user, router])
 
-  const [activeTab, setActiveTab] = useState("Startups")
+  const [activeTab, setActiveTab] = useState("Overview")
   const [searchQuery, setSearchQuery] = useState("")
   const [isCreateUserOpen, setIsCreateUserOpen] = useState(false)
   const [isAssignEquityOpen, setIsAssignEquityOpen] = useState(false)
   const [selectedInvestorId, setSelectedInvestorId] = useState<string | undefined>(undefined)
+
+  useEffect(() => {
+    const requestedTab = new URLSearchParams(window.location.search).get("tab") || "overview"
+    setActiveTab(ADMIN_TAB_MAP[requestedTab] || "Overview")
+  }, [pathname])
+
+  const isAdmin = user?.role === "admin"
 
   // Fetch Startups
   const { data: startups = [] } = useQuery({
@@ -52,7 +69,8 @@ export default function AdminPage() {
     queryFn: async () => {
       const res = await api.get('/startups?limit=100')
       return res.data.data.startups
-    }
+    },
+    enabled: !authLoading && !!user
   })
 
   // Fetch Investors
@@ -69,7 +87,8 @@ export default function AdminPage() {
         lastLogin: new Date(u.createdAt).toLocaleDateString(),
         status: u.isActive ? 'active' : 'inactive'
       }))
-    }
+    },
+    enabled: !authLoading && isAdmin
   })
 
   // Fetch Pending Approvals
@@ -84,7 +103,8 @@ export default function AdminPage() {
         requestedBy: r.investorId.name,
         date: new Date(r.createdAt).toLocaleDateString()
       }))
-    }
+    },
+    enabled: !authLoading && isAdmin
   })
 
   const handleRequestMutation = useMutation({
@@ -95,8 +115,6 @@ export default function AdminPage() {
       queryClient.invalidateQueries({ queryKey: ['admin-requests'] })
     }
   })
-
-  const [startupVisibility, setStartupVisibility] = useState<Record<string, boolean>>({})
 
   const filteredStartups = startups.filter(
     (s: any) =>
@@ -110,8 +128,46 @@ export default function AdminPage() {
       i.email.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  const toggleVisibility = (id: string) => {
-    setStartupVisibility((prev) => ({ ...prev, [id]: !prev[id] }))
+  const setAdminTab = (tab: string) => {
+    setActiveTab(tab)
+    setSearchQuery("")
+
+    if (tab === "Overview") {
+      router.replace("/admin?tab=overview")
+      return
+    }
+
+    if (tab === "Startups") {
+      router.replace("/admin?tab=startups")
+      return
+    }
+
+    if (tab === "Investors") {
+      router.replace("/admin?tab=investors")
+      return
+    }
+
+    if (tab === "Pending Approvals") {
+      router.replace("/admin?tab=overview")
+      return
+    }
+
+    if (tab === "Analytics") {
+      router.replace("/admin?tab=analytics")
+      return
+    }
+
+    if (tab === "Settings") {
+      router.replace("/admin?tab=settings")
+    }
+  }
+
+  if (authLoading) {
+    return (
+      <DashboardLayout type="admin" userName="Admin" userRole="Administrator">
+        <div className="p-6 lg:p-8 text-muted-foreground">Loading admin session...</div>
+      </DashboardLayout>
+    )
   }
 
   return (
@@ -164,10 +220,7 @@ export default function AdminPage() {
             {tabs.map((tab) => (
               <button
                 key={tab}
-                onClick={() => {
-                  setActiveTab(tab)
-                  setSearchQuery("")
-                }}
+                onClick={() => setAdminTab(tab)}
                 className={cn(
                   "px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px",
                   activeTab === tab
@@ -197,6 +250,27 @@ export default function AdminPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 h-11 bg-card border-border"
             />
+          </div>
+        )}
+
+        {activeTab === "Overview" && (
+          <div className="grid lg:grid-cols-2 gap-6">
+            <div className="gradient-card rounded-xl border border-border p-6">
+              <h2 className="text-lg font-semibold text-foreground mb-4">Platform Summary</h2>
+              <div className="space-y-3 text-sm text-muted-foreground">
+                <p>Published startups available in admin: <span className="text-foreground font-medium">{startups.length}</span></p>
+                <p>Investor accounts loaded: <span className="text-foreground font-medium">{investors.length}</span></p>
+                <p>Pending investor requests: <span className="text-foreground font-medium">{pendingApprovals.length}</span></p>
+              </div>
+            </div>
+            <div className="gradient-card rounded-xl border border-border p-6">
+              <h2 className="text-lg font-semibold text-foreground mb-4">Admin Actions</h2>
+              <div className="space-y-3 text-sm text-muted-foreground">
+                <p>Use `Startups` to review currently published company records.</p>
+                <p>Use `Investors` to create investor accounts and assign equity.</p>
+                <p>Use `Pending Approvals` to review inbound investor requests.</p>
+              </div>
+            </div>
           </div>
         )}
 
@@ -379,6 +453,52 @@ export default function AdminPage() {
                 </div>
               ))
             )}
+          </div>
+        )}
+
+        {activeTab === "Analytics" && (
+          <div className="gradient-card rounded-xl border border-border p-8">
+            <h2 className="text-lg font-semibold text-foreground mb-2">Analytics</h2>
+            <p className="text-muted-foreground mb-6">Current live totals derived from loaded admin data.</p>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="rounded-xl border border-border p-4">
+                <p className="text-sm text-muted-foreground">Published Startups</p>
+                <p className="text-2xl font-bold text-foreground">{startups.length}</p>
+              </div>
+              <div className="rounded-xl border border-border p-4">
+                <p className="text-sm text-muted-foreground">Investors</p>
+                <p className="text-2xl font-bold text-foreground">{investors.length}</p>
+              </div>
+              <div className="rounded-xl border border-border p-4">
+                <p className="text-sm text-muted-foreground">Pending Approvals</p>
+                <p className="text-2xl font-bold text-foreground">{pendingApprovals.length}</p>
+              </div>
+              <div className="rounded-xl border border-border p-4">
+                <p className="text-sm text-muted-foreground">Documents</p>
+                <p className="text-2xl font-bold text-foreground">234</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "Settings" && (
+          <div className="gradient-card rounded-xl border border-border p-8">
+            <h2 className="text-lg font-semibold text-foreground mb-2">Settings</h2>
+            <p className="text-muted-foreground mb-6">Administrative controls that are already available in this build.</p>
+            <div className="space-y-4">
+              <div className="rounded-xl border border-border p-4">
+                <p className="font-medium text-foreground">User Creation</p>
+                <p className="text-sm text-muted-foreground">Use the Investors panel to create investor accounts.</p>
+              </div>
+              <div className="rounded-xl border border-border p-4">
+                <p className="font-medium text-foreground">Equity Assignment</p>
+                <p className="text-sm text-muted-foreground">Use the Assign Equity dialog to grant investor access and ownership.</p>
+              </div>
+              <div className="rounded-xl border border-border p-4">
+                <p className="font-medium text-foreground">Approval Queue</p>
+                <p className="text-sm text-muted-foreground">Use Pending Approvals to review investor requests.</p>
+              </div>
+            </div>
           </div>
         )}
       </div>

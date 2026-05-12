@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import StoreProvider from './StoreProvider'
 import ReactQueryProvider from './ReactQueryProvider'
+import AuthBootstrap from './AuthBootstrap'
 import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
@@ -50,6 +51,7 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans antialiased`}>
         <ReactQueryProvider>
           <StoreProvider>
+            <AuthBootstrap />
             <ThemeProvider
               attribute="class"
               defaultTheme="light"
