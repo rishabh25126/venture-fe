@@ -84,7 +84,7 @@ export default function StartupsPage() {
     }
 
     return result
-  }, [searchQuery, selectedSectors, selectedStages, sortBy])
+  }, [fetchedStartups, searchQuery, selectedSectors, selectedStages, sortBy])
 
   const toggleSector = (sector: string) => {
     setSelectedSectors((prev) =>
@@ -330,7 +330,23 @@ export default function StartupsPage() {
               </div>
 
               {/* Startup Grid */}
-              {filteredStartups.length > 0 ? (
+              {isLoading ? (
+                <div className="text-center py-16">
+                  <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
+                    <Search className="w-8 h-8 text-muted-foreground animate-pulse" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">Loading startups</h3>
+                  <p className="text-muted-foreground">Fetching the latest opportunities...</p>
+                </div>
+              ) : error ? (
+                <div className="text-center py-16">
+                  <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
+                    <Search className="w-8 h-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">Unable to load startups</h3>
+                  <p className="text-muted-foreground">Please refresh the page and try again.</p>
+                </div>
+              ) : filteredStartups.length > 0 ? (
                 <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
                   {filteredStartups.map((startup) => (
                     <StartupCard key={startup.id} {...startup} />
