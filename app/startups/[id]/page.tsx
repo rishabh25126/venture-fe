@@ -2,7 +2,6 @@
 
 import { useState, use } from "react"
 import Link from "next/link"
-import { notFound } from "next/navigation"
 import { 
   ArrowLeft, 
   ArrowUpRight, 
@@ -20,8 +19,9 @@ import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { startups } from "@/lib/data"
 import { cn } from "@/lib/utils"
+import { useQuery } from "@tanstack/react-query"
+import api from "@/lib/api"
 
 const tabs = ["Overview", "Team", "Metrics", "Pitch Deck"]
 
@@ -42,15 +42,95 @@ const stageColors: Record<string, { bg: string; text: string }> = {
   "Series B": { bg: "bg-[#14432A]", text: "text-[#34D399]" },
 }
 
+function formatFundingAsk(amount?: number) {
+  if (!amount) return "TBD"
+  if (amount >= 10000000) return `₹${(amount / 10000000).toFixed(amount % 10000000 === 0 ? 0 : 1)}Cr`
+  return `₹${(amount / 100000).toFixed(amount % 100000 === 0 ? 0 : 1)}L`
+}
+
+function normalizeStartup(startup: any) {
+  const growth = startup.metrics?.growthPercent || 0
+
+  return {
+    id: startup.slug,
+    name: startup.name,
+    tagline: startup.tagline,
+    logo: startup.logo || "🏢",
+    sector: startup.sector,
+    stage: startup.stage,
+    fundingAsk: formatFundingAsk(startup.fundingAsk),
+    fundingProgress: 0,
+    founded: startup.createdAt ? new Date(startup.createdAt).getFullYear().toString() : "TBD",
+    hq: "India",
+    teamSize: startup.team?.length || 0,
+    description: startup.description || "Company profile details will be updated soon.",
+    problem: startup.problem || "Problem statement will be updated soon.",
+    solution: startup.solution || "Solution details will be updated soon.",
+    team: startup.team || [],
+    growth,
+    metrics: {
+      revenue: startup.metrics?.revenueRange || "TBD",
+      users: startup.metrics?.userBase || "TBD",
+      runway: startup.metrics?.runway || "TBD",
+      mrr: "TBD",
+    },
+    valuationHistory: [
+      { date: "Seed", value: Math.max(1, Math.round((startup.fundingAsk || 10000000) / 10000000)) },
+      { date: "Current", value: Math.max(2, Math.round(((startup.fundingAsk || 10000000) / 10000000) * (1 + growth / 100))) },
+    ],
+  }
+}
+
 export default function StartupProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params)
   const [activeTab, setActiveTab] = useState("Overview")
   const [interestForm, setInterestForm] = useState({ name: "", email: "", message: "" })
 
-  const startup = startups.find((s) => s.id === resolvedParams.id)
+  const { data: startup, isLoading, error } = useQuery({
+    queryKey: ["startup", resolvedParams.id],
+    queryFn: async () => {
+      const res = await api.get(`/startups/${resolvedParams.id}`)
+      return normalizeStartup(res.data.data.startup)
+    },
+  })
 
-  if (!startup) {
-    notFound()
+  if (isLoading) {
+    return (
+      <main className="min-h-screen">
+        <Navbar />
+        <div className="pt-24 pb-16">
+          <div className="max-w-[960px] mx-auto px-4 md:px-6 text-center py-20">
+            <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
+              <Building2 className="w-8 h-8 text-muted-foreground animate-pulse" />
+            </div>
+            <h1 className="text-xl font-semibold text-foreground mb-2">Loading startup</h1>
+            <p className="text-muted-foreground">Fetching the latest company profile...</p>
+          </div>
+        </div>
+        <Footer />
+      </main>
+    )
+  }
+
+  if (error || !startup) {
+    return (
+      <main className="min-h-screen">
+        <Navbar />
+        <div className="pt-24 pb-16">
+          <div className="max-w-[960px] mx-auto px-4 md:px-6 text-center py-20">
+            <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
+              <Building2 className="w-8 h-8 text-muted-foreground" />
+            </div>
+            <h1 className="text-xl font-semibold text-foreground mb-2">Startup not found</h1>
+            <p className="text-muted-foreground mb-6">This company profile is unavailable or has been unpublished.</p>
+            <Link href="/startups">
+              <Button variant="outline">Back to listings</Button>
+            </Link>
+          </div>
+        </div>
+        <Footer />
+      </main>
+    )
   }
 
   const sectorStyle = sectorColors[startup.sector] || { bg: "bg-secondary", text: "text-muted-foreground" }
