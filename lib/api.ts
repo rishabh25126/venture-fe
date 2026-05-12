@@ -1,6 +1,25 @@
 import axios from 'axios';
-import { makeStore } from './store/store';
-import { logout } from './features/auth/authSlice';
+
+const DEFAULT_PRODUCTION_API_URL = 'https://venture-be.vercel.app/api';
+
+function getApiBaseUrl(): string {
+  const isDev =
+    process.env.NODE_ENV === 'development' ||
+    process.env.NEXT_PUBLIC_APP_ENV === 'development';
+
+  if (isDev) {
+    return '/backend';
+  }
+
+  const explicit = process.env.NEXT_PUBLIC_API_URL?.trim();
+  if (explicit) {
+    return explicit.replace(/\/$/, '');
+  }
+
+  return DEFAULT_PRODUCTION_API_URL;
+}
+
+const apiBaseUrl = getApiBaseUrl();
 
 // We need a reference to the store to dispatch logout on 401
 // In Next.js App Router, we'll access the Redux state via hooks in components,
@@ -9,7 +28,7 @@ import { logout } from './features/auth/authSlice';
 // A common approach is passing the token in the interceptor:
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || '/backend',
+  baseURL: apiBaseUrl,
   withCredentials: true, // Send httpOnly cookies (refresh token) with requests
   headers: {
     'Content-Type': 'application/json',
@@ -53,7 +72,7 @@ api.interceptors.response.use(
       try {
         // Attempt to refresh token using httpOnly cookie
         const res = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL || '/backend'}/auth/refresh`,
+          `${apiBaseUrl}/auth/refresh`,
           {},
           { withCredentials: true }
         );
