@@ -12,12 +12,19 @@ import api, { setApiToken } from "@/lib/api"
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks"
 import { setCredentials } from "@/lib/features/auth/authSlice"
 import { getDashboardHref } from "@/lib/auth/route-access"
-import { getUserFacingErrorMessage, logErrorContext } from "@/lib/errors/user-facing-errors"
+import {
+  getUserFacingErrorMessage,
+  logErrorContext,
+} from "@/lib/errors/user-facing-errors"
 
 export default function LoginPage() {
   const router = useRouter()
   const dispatch = useAppDispatch()
-  const { user, isAuthenticated, isLoading: authLoading } = useAppSelector((state) => state.auth)
+  const {
+    user,
+    isAuthenticated,
+    isLoading: authLoading,
+  } = useAppSelector((state) => state.auth)
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -38,22 +45,28 @@ export default function LoginPage() {
     }
     setIsSubmitting(true)
     setError("")
-    
+
     try {
       const res = await api.post("/auth/login", { email, password })
       const { accessToken, user } = res.data.data
-      
+
       setApiToken(accessToken)
       dispatch(setCredentials({ user, accessToken }))
-      
-      if (user.role === 'admin' || user.role === 'owner') {
+
+      if (user.role === "admin" || user.role === "owner") {
         router.push("/admin")
       } else {
         router.push("/dashboard")
       }
     } catch (err: any) {
       logErrorContext("login", err)
-      setError(getUserFacingErrorMessage(err, "auth", "We couldn't sign you in right now. Please try again."))
+      setError(
+        getUserFacingErrorMessage(
+          err,
+          "auth",
+          "We couldn't sign you in right now. Please try again."
+        )
+      )
       setIsSubmitting(false)
     }
   }
@@ -62,7 +75,11 @@ export default function LoginPage() {
     return (
       <ScreenLoader
         title={isAuthenticated ? "Redirecting" : "Restoring session"}
-        description={isAuthenticated ? "Taking you back to your dashboard." : "Checking your account access."}
+        description={
+          isAuthenticated
+            ? "Taking you back to your dashboard."
+            : "Checking your account access."
+        }
         className="bg-card"
       />
     )
@@ -74,18 +91,23 @@ export default function LoginPage() {
       <div className="hidden lg:flex flex-col justify-between w-1/2 gradient-hero p-12 relative overflow-hidden">
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-20">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(59, 130, 246, 0.3) 1px, transparent 0)`,
-            backgroundSize: '40px 40px',
-          }} />
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `radial-gradient(circle at 1px 1px, rgba(59, 130, 246, 0.3) 1px, transparent 0)`,
+              backgroundSize: "40px 40px",
+            }}
+          />
         </div>
-        
+
         <div className="relative">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-semibold text-foreground">Irresistible</span>
+            <span className="text-xl font-semibold text-foreground">
+              Irresistible
+            </span>
           </Link>
         </div>
 
@@ -94,14 +116,17 @@ export default function LoginPage() {
             Access Your Investment Portfolio
           </h1>
           <p className="text-lg text-muted-foreground max-w-md">
-            Track your investments, access detailed financials, and stay updated with your portfolio companies.
+            Track your investments, access detailed financials, and stay updated
+            with your portfolio companies.
           </p>
         </div>
 
         <div className="relative">
           <div className="gradient-card rounded-xl border border-border p-6 max-w-sm">
             <p className="text-muted-foreground italic mb-4">
-              &ldquo;Irresistible has transformed how I manage my business investments. The data room access and real-time updates are invaluable.&rdquo;
+              &ldquo;Irresistible has transformed how I manage my business
+              investments. The data room access and real-time updates are
+              invaluable.&rdquo;
             </p>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-lg font-bold text-foreground">
@@ -125,22 +150,24 @@ export default function LoginPage() {
               <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
                 <TrendingUp className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-semibold text-foreground">Irresistible</span>
+              <span className="text-xl font-semibold text-foreground">
+                Irresistible
+              </span>
             </Link>
           </div>
 
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-foreground mb-2">Account Login</h2>
-            <p className="text-muted-foreground">Enter your credentials to access your assigned businesses and portfolio</p>
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              Account Login
+            </h2>
+            <p className="text-muted-foreground">
+              Enter your credentials to access your assigned businesses and
+              portfolio
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {error && (
-              <ErrorState
-                title="Unable to sign in"
-                message={error}
-              />
-            )}
+            {error && <ErrorState title="Unable to sign in" message={error} />}
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
                 Email Address
@@ -182,20 +209,30 @@ export default function LoginPage() {
                 </button>
               </div>
               <div className="mt-2 text-right">
-                <button type="button" className="text-sm text-primary hover:text-primary/80 transition-colors">
+                <button
+                  type="button"
+                  className="text-sm text-primary hover:text-primary/80 transition-colors"
+                >
                   Forgot password?
                 </button>
               </div>
             </div>
 
-            <Button type="submit" className="w-full h-11" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              className="w-full h-11"
+              disabled={isSubmitting}
+            >
               {isSubmitting ? "Signing in..." : "Sign In"}
             </Button>
           </form>
 
           <p className="mt-8 text-center text-sm text-muted-foreground">
             Don&apos;t have access? Contact your investment manager or{" "}
-            <Link href="#" className="text-primary hover:text-primary/80 transition-colors">
+            <Link
+              href="#"
+              className="text-primary hover:text-primary/80 transition-colors"
+            >
               request access
             </Link>
             .

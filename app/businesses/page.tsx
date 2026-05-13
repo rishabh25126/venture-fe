@@ -20,27 +20,30 @@ export default function BusinessesPage() {
   const [sortBy, setSortBy] = useState<string>("recent")
   const [showFilters, setShowFilters] = useState(false)
 
-  const { data: fetchedBusinesses = [], isLoading, error } = useQuery({
-    queryKey: ['businesses'],
+  const {
+    data: fetchedBusinesses = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["businesses"],
     queryFn: async () => {
-      const res = await api.get('/businesses?limit=50');
+      const res = await api.get("/businesses?limit=50")
       // Map backend schema to frontend Business interface
       return res.data.data.businesses.map((s: any) => ({
         id: s.slug,
         name: s.name,
         tagline: s.tagline,
-        logo: s.logo || '🏢',
+        logo: s.logo || "🏢",
         sector: s.sector,
         stage: s.stage,
         fundingAsk: `₹${(s.fundingAsk / 10000000).toFixed(0)}Cr`,
         fundingAskNum: s.fundingAsk,
-        revenueRange: s.metrics?.revenueRange || 'TBD',
+        revenueRange: s.metrics?.revenueRange || "TBD",
         growth: s.metrics?.growthPercent || 0,
         fundingProgress: 0,
-      }));
-    }
-  });
-
+      }))
+    },
+  })
 
   const filteredBusinesses = useMemo(() => {
     let result = [...fetchedBusinesses]
@@ -90,7 +93,9 @@ export default function BusinessesPage() {
 
   const toggleSector = (sector: string) => {
     setSelectedSectors((prev) =>
-      prev.includes(sector) ? prev.filter((s) => s !== sector) : [...prev, sector]
+      prev.includes(sector)
+        ? prev.filter((s) => s !== sector)
+        : [...prev, sector]
     )
   }
 
@@ -107,18 +112,24 @@ export default function BusinessesPage() {
     setSortBy("recent")
   }
 
-  const hasActiveFilters = selectedSectors.length > 0 || selectedStages.length > 0 || searchQuery
+  const hasActiveFilters =
+    selectedSectors.length > 0 || selectedStages.length > 0 || searchQuery
 
   return (
     <main className="min-h-screen">
       <Navbar />
-      
+
       <div className="pt-24 pb-16">
         <div className="max-w-[1280px] mx-auto px-4 md:px-6">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Business Listings</h1>
-            <p className="text-muted-foreground">Discover high-conviction ventures across featured business groups and beyond</p>
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+              Business Listings
+            </h1>
+            <p className="text-muted-foreground">
+              Discover high-conviction ventures across featured business groups
+              and beyond
+            </p>
           </div>
 
           <div className="flex flex-col lg:flex-row gap-8">
@@ -140,7 +151,9 @@ export default function BusinessesPage() {
 
                   {/* Business Groups */}
                   <div className="mb-6">
-                    <h4 className="text-sm font-medium text-foreground mb-3">Business Group</h4>
+                    <h4 className="text-sm font-medium text-foreground mb-3">
+                      Business Group
+                    </h4>
                     <div className="space-y-2">
                       {sectors.map((sector) => (
                         <label
@@ -156,8 +169,16 @@ export default function BusinessesPage() {
                             )}
                           >
                             {selectedSectors.includes(sector) && (
-                              <svg className="w-3 h-3 text-primary-foreground" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              <svg
+                                className="w-3 h-3 text-primary-foreground"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
                               </svg>
                             )}
                           </div>
@@ -177,7 +198,9 @@ export default function BusinessesPage() {
 
                   {/* Stages */}
                   <div>
-                    <h4 className="text-sm font-medium text-foreground mb-3">Stage</h4>
+                    <h4 className="text-sm font-medium text-foreground mb-3">
+                      Stage
+                    </h4>
                     <div className="space-y-2">
                       {stages.map((stage) => (
                         <label
@@ -193,8 +216,16 @@ export default function BusinessesPage() {
                             )}
                           >
                             {selectedStages.includes(stage) && (
-                              <svg className="w-3 h-3 text-primary-foreground" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              <svg
+                                className="w-3 h-3 text-primary-foreground"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
                               </svg>
                             )}
                           </div>
@@ -244,7 +275,7 @@ export default function BusinessesPage() {
                       </span>
                     )}
                   </Button>
-                  
+
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
@@ -268,10 +299,12 @@ export default function BusinessesPage() {
                       <X className="w-5 h-5 text-muted-foreground" />
                     </button>
                   </div>
-                  
+
                   <div className="grid sm:grid-cols-2 gap-6">
                     <div>
-                      <h4 className="text-sm font-medium text-foreground mb-3">Business Group</h4>
+                      <h4 className="text-sm font-medium text-foreground mb-3">
+                        Business Group
+                      </h4>
                       <div className="flex flex-wrap gap-2">
                         {sectors.map((sector) => (
                           <button
@@ -290,7 +323,9 @@ export default function BusinessesPage() {
                       </div>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-foreground mb-3">Stage</h4>
+                      <h4 className="text-sm font-medium text-foreground mb-3">
+                        Stage
+                      </h4>
                       <div className="flex flex-wrap gap-2">
                         {stages.map((stage) => (
                           <button
@@ -326,7 +361,8 @@ export default function BusinessesPage() {
               {/* Results count */}
               <div className="flex items-center justify-between mb-6">
                 <p className="text-sm text-muted-foreground">
-                  Showing {filteredBusinesses.length} {filteredBusinesses.length === 1 ? "business" : "businesses"}
+                  Showing {filteredBusinesses.length}{" "}
+                  {filteredBusinesses.length === 1 ? "business" : "businesses"}
                 </p>
               </div>
 
@@ -384,8 +420,12 @@ export default function BusinessesPage() {
                   <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
                     <Search className="w-8 h-8 text-muted-foreground" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">No businesses found</h3>
-                  <p className="text-muted-foreground mb-4">Try adjusting your filters or search query</p>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
+                    No businesses found
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    Try adjusting your filters or search query
+                  </p>
                   <Button variant="outline" onClick={clearFilters}>
                     Clear all filters
                   </Button>

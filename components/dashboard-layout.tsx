@@ -2,19 +2,19 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { 
-  TrendingUp, 
-  LayoutDashboard, 
-  Briefcase, 
-  FileText, 
-  MessageSquare, 
+import {
+  TrendingUp,
+  LayoutDashboard,
+  Briefcase,
+  FileText,
+  MessageSquare,
   Calendar,
   Settings,
   LogOut,
   Menu,
   X,
   Bell,
-  Clock3
+  Clock3,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useEffect, useState } from "react"
@@ -32,12 +32,42 @@ const investorNavItems = [
 ]
 
 const adminNavItems = [
-  { label: "Overview", href: "/admin?tab=overview", icon: LayoutDashboard, tab: "overview" },
-  { label: "Businesses", href: "/admin?tab=businesses", icon: Briefcase, tab: "businesses" },
-  { label: "Investors", href: "/admin?tab=investors", icon: TrendingUp, tab: "investors" },
-  { label: "Requests", href: "/admin?tab=requests", icon: Clock3, tab: "requests" },
-  { label: "Analytics", href: "/admin?tab=analytics", icon: TrendingUp, tab: "analytics" },
-  { label: "Settings", href: "/admin?tab=settings", icon: Settings, tab: "settings" },
+  {
+    label: "Overview",
+    href: "/admin?tab=overview",
+    icon: LayoutDashboard,
+    tab: "overview",
+  },
+  {
+    label: "Businesses",
+    href: "/admin?tab=businesses",
+    icon: Briefcase,
+    tab: "businesses",
+  },
+  {
+    label: "Investors",
+    href: "/admin?tab=investors",
+    icon: TrendingUp,
+    tab: "investors",
+  },
+  {
+    label: "Requests",
+    href: "/admin?tab=requests",
+    icon: Clock3,
+    tab: "requests",
+  },
+  {
+    label: "Analytics",
+    href: "/admin?tab=analytics",
+    icon: TrendingUp,
+    tab: "analytics",
+  },
+  {
+    label: "Settings",
+    href: "/admin?tab=settings",
+    icon: Settings,
+    tab: "settings",
+  },
 ]
 
 interface DashboardLayoutProps {
@@ -47,11 +77,11 @@ interface DashboardLayoutProps {
   userRole?: string
 }
 
-export function DashboardLayout({ 
-  children, 
+export function DashboardLayout({
+  children,
   type = "investor",
   userName = "Aditya Sharma",
-  userRole = "Investor"
+  userRole = "Investor",
 }: DashboardLayoutProps) {
   const pathname = usePathname()
   const router = useRouter()
@@ -59,7 +89,7 @@ export function DashboardLayout({
   const authUser = useAppSelector((state) => state.auth.user)
   const [currentAdminTab, setCurrentAdminTab] = useState("overview")
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  
+
   const navItems = type === "admin" ? adminNavItems : investorNavItems
 
   const resolvedName = authUser?.name || userName
@@ -99,16 +129,19 @@ export function DashboardLayout({
             <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-lg font-semibold text-foreground">Irresistible</span>
+            <span className="text-lg font-semibold text-foreground">
+              Irresistible
+            </span>
           </Link>
         </div>
 
         {/* Navigation */}
         <nav className="flex-1 px-3 py-4 space-y-1">
           {navItems.map((item) => {
-            const isActive = type === "admin"
-              ? pathname === "/admin" && currentAdminTab === item.tab
-              : pathname === item.href || pathname.startsWith(item.href + "/")
+            const isActive =
+              type === "admin"
+                ? pathname === "/admin" && currentAdminTab === item.tab
+                : pathname === item.href || pathname.startsWith(item.href + "/")
             return (
               <Link
                 key={item.href}
@@ -134,13 +167,15 @@ export function DashboardLayout({
         <div className="p-4 border-t border-border">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-sm font-bold text-foreground">
-                  {initials}
-                </div>
-                <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">{firstName}</p>
+              {initials}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground truncate">
+                {firstName}
+              </p>
               <p className="text-xs text-muted-foreground">{resolvedRole}</p>
-                </div>
-            <button 
+            </div>
+            <button
               onClick={handleLogout}
               className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
               aria-label="Log out"
@@ -157,17 +192,23 @@ export function DashboardLayout({
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
             <TrendingUp className="w-4 h-4 text-primary-foreground" />
           </div>
-          <span className="text-lg font-semibold text-foreground">Irresistible</span>
+          <span className="text-lg font-semibold text-foreground">
+            Irresistible
+          </span>
         </Link>
         <div className="flex items-center gap-2">
           <button className="w-10 h-10 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground">
             <Bell className="w-5 h-5" />
           </button>
-          <button 
+          <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="w-10 h-10 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground"
           >
-            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {sidebarOpen ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Menu className="w-5 h-5" />
+            )}
           </button>
         </div>
       </header>
@@ -175,16 +216,18 @@ export function DashboardLayout({
       {/* Mobile Sidebar */}
       {sidebarOpen && (
         <>
-          <div 
+          <div
             className="lg:hidden fixed inset-0 bg-black/50 z-40"
             onClick={() => setSidebarOpen(false)}
           />
           <aside className="lg:hidden fixed right-0 top-16 bottom-0 w-72 bg-card border-l border-border z-50 flex flex-col">
             <nav className="flex-1 px-3 py-4 space-y-1">
               {navItems.map((item) => {
-                const isActive = type === "admin"
-                  ? pathname === "/admin" && currentAdminTab === item.tab
-                  : pathname === item.href || pathname.startsWith(item.href + "/")
+                const isActive =
+                  type === "admin"
+                    ? pathname === "/admin" && currentAdminTab === item.tab
+                    : pathname === item.href ||
+                      pathname.startsWith(item.href + "/")
                 return (
                   <Link
                     key={item.href}
@@ -209,8 +252,12 @@ export function DashboardLayout({
                   {initials}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">{firstName}</p>
-                  <p className="text-xs text-muted-foreground">{resolvedRole}</p>
+                  <p className="text-sm font-medium text-foreground truncate">
+                    {firstName}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {resolvedRole}
+                  </p>
                 </div>
                 <button
                   onClick={handleLogout}
@@ -226,9 +273,7 @@ export function DashboardLayout({
       )}
 
       {/* Main Content */}
-      <main className="lg:pl-60 pt-16 lg:pt-0 min-h-screen">
-        {children}
-      </main>
+      <main className="lg:pl-60 pt-16 lg:pt-0 min-h-screen">{children}</main>
     </div>
   )
 }

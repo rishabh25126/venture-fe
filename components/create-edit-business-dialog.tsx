@@ -30,7 +30,12 @@ const DEFAULT_FORM = {
   ownerIds: [] as string[],
 }
 
-export function CreateEditBusinessDialog({ isOpen, onClose, businessId, currentUserRole }: BusinessDialogProps) {
+export function CreateEditBusinessDialog({
+  isOpen,
+  onClose,
+  businessId,
+  currentUserRole,
+}: BusinessDialogProps) {
   const queryClient = useQueryClient()
   const [formData, setFormData] = useState(DEFAULT_FORM)
 
@@ -59,7 +64,9 @@ export function CreateEditBusinessDialog({ isOpen, onClose, businessId, currentU
     if (!editableBusiness) return
 
     const business = editableBusiness.business
-    const assignedOwnerIds = (editableBusiness.owners || []).map((record: any) => record.ownerId?._id).filter(Boolean)
+    const assignedOwnerIds = (editableBusiness.owners || [])
+      .map((record: any) => record.ownerId?._id)
+      .filter(Boolean)
     setFormData({
       name: business.name || "",
       slug: business.slug || "",
@@ -98,7 +105,9 @@ export function CreateEditBusinessDialog({ isOpen, onClose, businessId, currentU
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-businesses"] })
-      queryClient.invalidateQueries({ queryKey: ["editable-business", businessId] })
+      queryClient.invalidateQueries({
+        queryKey: ["editable-business", businessId],
+      })
       handleClose()
     },
   })
@@ -116,7 +125,9 @@ export function CreateEditBusinessDialog({ isOpen, onClose, businessId, currentU
       const exists = current.ownerIds.includes(ownerId)
       return {
         ...current,
-        ownerIds: exists ? current.ownerIds.filter((id) => id !== ownerId) : [...current.ownerIds, ownerId],
+        ownerIds: exists
+          ? current.ownerIds.filter((id) => id !== ownerId)
+          : [...current.ownerIds, ownerId],
       }
     })
   }
@@ -126,7 +137,8 @@ export function CreateEditBusinessDialog({ isOpen, onClose, businessId, currentU
     businessMutation.mutate()
   }
 
-  const isOwnerSelectionInvalid = canManageOwners && formData.ownerIds.length === 0
+  const isOwnerSelectionInvalid =
+    canManageOwners && formData.ownerIds.length === 0
 
   return (
     <AnimatePresence>
@@ -148,9 +160,13 @@ export function CreateEditBusinessDialog({ isOpen, onClose, businessId, currentU
             <div className="gradient-card max-h-[88vh] overflow-y-auto rounded-2xl border border-border bg-card shadow-2xl">
               <div className="flex items-center justify-between border-b border-border p-6">
                 <div>
-                  <h2 className="text-xl font-bold text-foreground">{dialogTitle}</h2>
+                  <h2 className="text-xl font-bold text-foreground">
+                    {dialogTitle}
+                  </h2>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {isEditing ? "Update business details for the assigned business" : "Create a business and assign at least one owner"}
+                    {isEditing
+                      ? "Update business details for the assigned business"
+                      : "Create a business and assign at least one owner"}
                   </p>
                 </div>
                 <button
@@ -164,20 +180,33 @@ export function CreateEditBusinessDialog({ isOpen, onClose, businessId, currentU
               <form onSubmit={handleSubmit} className="p-6 space-y-5">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">Business Name *</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Business Name *
+                    </label>
                     <Input
                       required
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
                       className="bg-secondary/50"
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">Slug *</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Slug *
+                    </label>
                     <Input
                       required
                       value={formData.slug}
-                      onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          slug: e.target.value
+                            .toLowerCase()
+                            .replace(/\s+/g, "-"),
+                        })
+                      }
                       className="bg-secondary/50"
                     />
                   </div>
@@ -185,19 +214,27 @@ export function CreateEditBusinessDialog({ isOpen, onClose, businessId, currentU
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">Business Group *</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Business Group *
+                    </label>
                     <Input
                       required
                       value={formData.sector}
-                      onChange={(e) => setFormData({ ...formData, sector: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, sector: e.target.value })
+                      }
                       className="bg-secondary/50"
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">Stage *</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Stage *
+                    </label>
                     <select
                       value={formData.stage}
-                      onChange={(e) => setFormData({ ...formData, stage: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, stage: e.target.value })
+                      }
                       className="w-full h-11 px-3 rounded-lg bg-secondary/50 border border-border text-foreground text-sm"
                     >
                       <option value="Pre-seed">Pre-seed</option>
@@ -211,71 +248,100 @@ export function CreateEditBusinessDialog({ isOpen, onClose, businessId, currentU
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">Tagline</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Tagline
+                    </label>
                     <Input
                       value={formData.tagline}
-                      onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, tagline: e.target.value })
+                      }
                       className="bg-secondary/50"
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">Funding Ask (₹) *</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Funding Ask (₹) *
+                    </label>
                     <Input
                       required
                       type="number"
                       min="1"
                       value={formData.fundingAsk}
-                      onChange={(e) => setFormData({ ...formData, fundingAsk: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, fundingAsk: e.target.value })
+                      }
                       className="bg-secondary/50"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">Description</label>
+                  <label className="text-sm font-medium text-foreground mb-2 block">
+                    Description
+                  </label>
                   <textarea
                     value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
                     className="w-full min-h-[96px] rounded-lg border border-border bg-secondary/50 px-3 py-2 text-sm text-foreground"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">Problem</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Problem
+                    </label>
                     <textarea
                       value={formData.problem}
-                      onChange={(e) => setFormData({ ...formData, problem: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, problem: e.target.value })
+                      }
                       className="w-full min-h-[96px] rounded-lg border border-border bg-secondary/50 px-3 py-2 text-sm text-foreground"
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">Solution</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Solution
+                    </label>
                     <textarea
                       value={formData.solution}
-                      onChange={(e) => setFormData({ ...formData, solution: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, solution: e.target.value })
+                      }
                       className="w-full min-h-[96px] rounded-lg border border-border bg-secondary/50 px-3 py-2 text-sm text-foreground"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">Use of Funds</label>
+                  <label className="text-sm font-medium text-foreground mb-2 block">
+                    Use of Funds
+                  </label>
                   <textarea
                     value={formData.useOfFunds}
-                    onChange={(e) => setFormData({ ...formData, useOfFunds: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, useOfFunds: e.target.value })
+                    }
                     className="w-full min-h-[96px] rounded-lg border border-border bg-secondary/50 px-3 py-2 text-sm text-foreground"
                   />
                 </div>
 
                 {canManageOwners && (
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">Owners *</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Owners *
+                    </label>
                     <div className="grid grid-cols-1 gap-2 rounded-lg border border-border bg-secondary/30 p-3 sm:grid-cols-2">
                       {owners.map((owner: any) => {
                         const checked = formData.ownerIds.includes(owner._id)
                         return (
-                          <label key={owner._id} className="flex items-center gap-2 text-sm text-foreground">
+                          <label
+                            key={owner._id}
+                            className="flex items-center gap-2 text-sm text-foreground"
+                          >
                             <input
                               type="checkbox"
                               checked={checked}
@@ -286,27 +352,46 @@ export function CreateEditBusinessDialog({ isOpen, onClose, businessId, currentU
                         )
                       })}
                     </div>
-                    <p className="mt-2 text-xs text-muted-foreground">A business must always have at least one owner.</p>
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      A business must always have at least one owner.
+                    </p>
                   </div>
                 )}
 
                 {businessMutation.isError && (
                   <div className="flex items-center gap-2 text-sm text-[#EF4444] bg-[#EF4444]/10 p-3 rounded-lg border border-[#EF4444]/20">
                     <AlertCircle className="w-4 h-4 shrink-0" />
-                    <p>{getUserFacingErrorMessage(businessMutation.error, "mutation", "We couldn't save this business right now.")}</p>
+                    <p>
+                      {getUserFacingErrorMessage(
+                        businessMutation.error,
+                        "mutation",
+                        "We couldn't save this business right now."
+                      )}
+                    </p>
                   </div>
                 )}
 
                 <div className="pt-4 flex flex-col-reverse gap-3 sm:flex-row">
-                  <Button type="button" variant="outline" onClick={handleClose} className="w-full sm:flex-1">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleClose}
+                    className="w-full sm:flex-1"
+                  >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
                     className="w-full sm:flex-1"
-                    disabled={businessMutation.isPending || isOwnerSelectionInvalid}
+                    disabled={
+                      businessMutation.isPending || isOwnerSelectionInvalid
+                    }
                   >
-                    {businessMutation.isPending ? "Saving..." : isEditing ? "Save Changes" : "Create Business"}
+                    {businessMutation.isPending
+                      ? "Saving..."
+                      : isEditing
+                        ? "Save Changes"
+                        : "Create Business"}
                   </Button>
                 </div>
               </form>

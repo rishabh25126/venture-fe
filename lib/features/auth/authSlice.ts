@@ -1,17 +1,17 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: 'investor' | 'owner' | 'admin';
+  id: string
+  name: string
+  email: string
+  role: "investor" | "owner" | "admin"
 }
 
 interface AuthState {
-  user: User | null;
-  accessToken: string | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
+  user: User | null
+  accessToken: string | null
+  isAuthenticated: boolean
+  isLoading: boolean
 }
 
 const initialState: AuthState = {
@@ -19,32 +19,32 @@ const initialState: AuthState = {
   accessToken: null,
   isAuthenticated: false,
   isLoading: true, // Initially true while we check for existing session
-};
+}
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     setCredentials: (
       state,
       action: PayloadAction<{ user: User; accessToken: string }>
     ) => {
-      state.user = action.payload.user;
-      state.accessToken = action.payload.accessToken;
-      state.isAuthenticated = true;
-      state.isLoading = false;
+      state.user = action.payload.user
+      state.accessToken = action.payload.accessToken
+      state.isAuthenticated = true
+      state.isLoading = false
     },
     logout: (state) => {
-      state.user = null;
-      state.accessToken = null;
-      state.isAuthenticated = false;
-      state.isLoading = false;
+      state.user = null
+      state.accessToken = null
+      state.isAuthenticated = false
+      state.isLoading = false
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
+      state.isLoading = action.payload
     },
   },
-});
+})
 
-export const { setCredentials, logout, setLoading } = authSlice.actions;
-export default authSlice.reducer;
+export const { setCredentials, logout, setLoading } = authSlice.actions
+export default authSlice.reducer

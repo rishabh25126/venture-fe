@@ -45,8 +45,14 @@ export function BusinessCard({
   growth,
   fundingProgress,
 }: BusinessCardProps) {
-  const sectorStyle = sectorColors[sector] || { bg: "bg-secondary", text: "text-muted-foreground" }
-  const stageStyle = stageColors[stage] || { bg: "bg-secondary", text: "text-muted-foreground" }
+  const sectorStyle = sectorColors[sector] || {
+    bg: "bg-secondary",
+    text: "text-muted-foreground",
+  }
+  const stageStyle = stageColors[stage] || {
+    bg: "bg-secondary",
+    text: "text-muted-foreground",
+  }
 
   return (
     <motion.div
@@ -59,10 +65,22 @@ export function BusinessCard({
     >
       {/* Top badges */}
       <div className="flex items-center gap-2 mb-4">
-        <span className={cn("px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wide", sectorStyle.bg, sectorStyle.text)}>
+        <span
+          className={cn(
+            "px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wide",
+            sectorStyle.bg,
+            sectorStyle.text
+          )}
+        >
           {sector}
         </span>
-        <span className={cn("px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wide", stageStyle.bg, stageStyle.text)}>
+        <span
+          className={cn(
+            "px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wide",
+            stageStyle.bg,
+            stageStyle.text
+          )}
+        >
           {stage}
         </span>
       </div>
@@ -70,15 +88,15 @@ export function BusinessCard({
       {/* Company info */}
       <div className="flex items-start gap-3 mb-4">
         <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-lg font-bold text-foreground overflow-hidden shrink-0">
-          {logo ? (
-            <span>{logo}</span>
-          ) : (
-            name.charAt(0)
-          )}
+          {logo ? <span>{logo}</span> : name.charAt(0)}
         </div>
         <div className="min-w-0">
-          <h3 className="text-lg font-semibold text-foreground truncate">{name}</h3>
-          <p className="text-sm text-muted-foreground line-clamp-1">{tagline}</p>
+          <h3 className="text-lg font-semibold text-foreground truncate">
+            {name}
+          </h3>
+          <p className="text-sm text-muted-foreground line-clamp-1">
+            {tagline}
+          </p>
         </div>
       </div>
 
@@ -89,17 +107,29 @@ export function BusinessCard({
       <div className="grid grid-cols-3 gap-3 mb-4">
         <div>
           <p className="text-xs text-muted-foreground mb-1">Capital Ask</p>
-          <p className="text-sm font-semibold tabular-nums text-foreground">{fundingAsk}</p>
+          <p className="text-sm font-semibold tabular-nums text-foreground">
+            {fundingAsk}
+          </p>
         </div>
         <div>
           <p className="text-xs text-muted-foreground mb-1">Revenue</p>
-          <p className="text-sm font-semibold tabular-nums text-foreground">{revenueRange}</p>
+          <p className="text-sm font-semibold tabular-nums text-foreground">
+            {revenueRange}
+          </p>
         </div>
         <div>
           <p className="text-xs text-muted-foreground mb-1">Growth</p>
-          <p className={cn("text-sm font-semibold tabular-nums flex items-center gap-0.5", growth >= 0 ? "text-[#10B981]" : "text-[#EF4444]")}>
-            {growth >= 0 ? "+" : ""}{growth}%
-            <ArrowUpRight className={cn("w-3.5 h-3.5", growth < 0 && "rotate-90")} />
+          <p
+            className={cn(
+              "text-sm font-semibold tabular-nums flex items-center gap-0.5",
+              growth >= 0 ? "text-[#10B981]" : "text-[#EF4444]"
+            )}
+          >
+            {growth >= 0 ? "+" : ""}
+            {growth}%
+            <ArrowUpRight
+              className={cn("w-3.5 h-3.5", growth < 0 && "rotate-90")}
+            />
           </p>
         </div>
       </div>
@@ -124,9 +154,7 @@ export function BusinessCard({
 
       {/* CTA */}
       <Button className="w-full" asChild>
-        <Link href={`/businesses/${id}`}>
-          Express Interest
-        </Link>
+        <Link href={`/businesses/${id}`}>Express Interest</Link>
       </Button>
     </motion.div>
   )

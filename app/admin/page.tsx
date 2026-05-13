@@ -29,7 +29,14 @@ import { CreateUserDialog } from "@/components/create-user-dialog"
 import { AssignEquityDialog } from "@/components/assign-equity-dialog"
 import { CreateEditBusinessDialog } from "@/components/create-edit-business-dialog"
 
-const tabs = ["Overview", "Businesses", "Investors", "Requests", "Analytics", "Settings"]
+const tabs = [
+  "Overview",
+  "Businesses",
+  "Investors",
+  "Requests",
+  "Analytics",
+  "Settings",
+]
 const ADMIN_TAB_MAP: Record<string, string> = {
   overview: "Overview",
   businesses: "Businesses",
@@ -39,7 +46,12 @@ const ADMIN_TAB_MAP: Record<string, string> = {
   settings: "Settings",
 }
 
-const REQUEST_STATUSES = ["PENDING", "REVIEWING", "REJECTED", "ACCEPTED"] as const
+const REQUEST_STATUSES = [
+  "PENDING",
+  "REVIEWING",
+  "REJECTED",
+  "ACCEPTED",
+] as const
 const DEFAULT_REQUEST_STATUSES = ["PENDING", "REVIEWING"] as const
 
 const STATUS_LABELS: Record<(typeof REQUEST_STATUSES)[number], string> = {
@@ -97,11 +109,19 @@ export default function AdminPage() {
   const [isCreateUserOpen, setIsCreateUserOpen] = useState(false)
   const [isAssignEquityOpen, setIsAssignEquityOpen] = useState(false)
   const [isBusinessDialogOpen, setIsBusinessDialogOpen] = useState(false)
-  const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(null)
-  const [selectedInvestorId, setSelectedInvestorId] = useState<string | undefined>(undefined)
-  const [requestStatuses, setRequestStatuses] = useState<RequestStatus[]>([...DEFAULT_REQUEST_STATUSES])
+  const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(
+    null
+  )
+  const [selectedInvestorId, setSelectedInvestorId] = useState<
+    string | undefined
+  >(undefined)
+  const [requestStatuses, setRequestStatuses] = useState<RequestStatus[]>([
+    ...DEFAULT_REQUEST_STATUSES,
+  ])
   const [requestSort, setRequestSort] = useState<"oldest" | "newest">("oldest")
-  const [requestGroupMode, setRequestGroupMode] = useState<"flat" | "business">("flat")
+  const [requestGroupMode, setRequestGroupMode] = useState<"flat" | "business">(
+    "flat"
+  )
   const [requestPage, setRequestPage] = useState(1)
   const [requestPageSize, setRequestPageSize] = useState(10)
 
@@ -111,7 +131,8 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (typeof window === "undefined") return
-    const requestedTab = new URLSearchParams(window.location.search).get("tab") || "overview"
+    const requestedTab =
+      new URLSearchParams(window.location.search).get("tab") || "overview"
     setActiveTab(ADMIN_TAB_MAP[requestedTab] || "Overview")
   }, [])
 
@@ -160,7 +181,13 @@ export default function AdminPage() {
   })
 
   const { data: requestsData, isLoading: requestsLoading } = useQuery({
-    queryKey: ["admin-requests", requestStatuses, requestSort, requestPage, requestPageSize],
+    queryKey: [
+      "admin-requests",
+      requestStatuses,
+      requestSort,
+      requestPage,
+      requestPageSize,
+    ],
     queryFn: async () => {
       const res = await api.get("/requests/admin", {
         params: {
@@ -194,7 +221,13 @@ export default function AdminPage() {
   })
 
   const handleRequestMutation = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: RequestStatus }) => {
+    mutationFn: async ({
+      id,
+      status,
+    }: {
+      id: string
+      status: RequestStatus
+    }) => {
       await api.patch(`/requests/admin/${id}`, { status })
     },
     onSuccess: () => {
@@ -282,7 +315,9 @@ export default function AdminPage() {
       <div className="p-6 lg:p-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{isAdmin ? "Admin Panel" : "Owner Panel"}</h1>
+            <h1 className="text-2xl font-bold text-foreground">
+              {isAdmin ? "Admin Panel" : "Owner Panel"}
+            </h1>
             <p className="text-muted-foreground">
               {isAdmin
                 ? "Manage businesses, owners, investors, and request reviews"
@@ -313,19 +348,41 @@ export default function AdminPage() {
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
-            { label: "Managed Businesses", value: businesses.length.toString(), icon: Building2, color: "text-primary" },
-            { label: "Visible Users", value: users.length.toString(), icon: Users, color: "text-[#10B981]" },
-            { label: "Documents", value: "234", icon: FileText, color: "text-[#F59E0B]" },
+            {
+              label: "Managed Businesses",
+              value: businesses.length.toString(),
+              icon: Building2,
+              color: "text-primary",
+            },
+            {
+              label: "Visible Users",
+              value: users.length.toString(),
+              icon: Users,
+              color: "text-[#10B981]",
+            },
+            {
+              label: "Documents",
+              value: "234",
+              icon: FileText,
+              color: "text-[#F59E0B]",
+            },
             {
               label: "Open Requests",
-              value: (requestSummary.PENDING + requestSummary.REVIEWING).toString(),
+              value: (
+                requestSummary.PENDING + requestSummary.REVIEWING
+              ).toString(),
               icon: Clock,
               color: "text-[#EF4444]",
             },
           ].map((stat) => (
-            <div key={stat.label} className="gradient-card rounded-xl border border-border p-5">
+            <div
+              key={stat.label}
+              className="gradient-card rounded-xl border border-border p-5"
+            >
               <stat.icon className={cn("w-5 h-5 mb-3", stat.color)} />
-              <p className="text-2xl font-bold text-foreground tabular-nums">{stat.value}</p>
+              <p className="text-2xl font-bold text-foreground tabular-nums">
+                {stat.value}
+              </p>
               <p className="text-sm text-muted-foreground">{stat.label}</p>
             </div>
           ))}
@@ -345,11 +402,12 @@ export default function AdminPage() {
                 )}
               >
                 {tab}
-                {tab === "Requests" && requestSummary.PENDING + requestSummary.REVIEWING > 0 && (
-                  <span className="ml-2 w-5 h-5 inline-flex items-center justify-center rounded-full bg-[#EF4444] text-white text-xs">
-                    {requestSummary.PENDING + requestSummary.REVIEWING}
-                  </span>
-                )}
+                {tab === "Requests" &&
+                  requestSummary.PENDING + requestSummary.REVIEWING > 0 && (
+                    <span className="ml-2 w-5 h-5 inline-flex items-center justify-center rounded-full bg-[#EF4444] text-white text-xs">
+                      {requestSummary.PENDING + requestSummary.REVIEWING}
+                    </span>
+                  )}
               </button>
             ))}
           </div>
@@ -361,7 +419,11 @@ export default function AdminPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder={activeTab === "Businesses" ? "Search businesses..." : "Search users..."}
+                placeholder={
+                  activeTab === "Businesses"
+                    ? "Search businesses..."
+                    : "Search users..."
+                }
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 h-11 bg-card border-border"
@@ -395,7 +457,10 @@ export default function AdminPage() {
               )}
 
               {activeTab === "Investors" && (
-                <Button onClick={() => setIsAssignEquityOpen(true)} className="w-full sm:w-auto">
+                <Button
+                  onClick={() => setIsAssignEquityOpen(true)}
+                  className="w-full sm:w-auto"
+                >
                   <Plus className="w-4 h-4 mr-2" />
                   Assign Equity
                 </Button>
@@ -407,17 +472,40 @@ export default function AdminPage() {
         {activeTab === "Overview" && (
           <div className="grid lg:grid-cols-2 gap-6">
             <div className="gradient-card rounded-xl border border-border p-6">
-              <h2 className="text-lg font-semibold text-foreground mb-4">Platform Summary</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-4">
+                Platform Summary
+              </h2>
               <div className="space-y-3 text-sm text-muted-foreground">
-                <p>Managed businesses: <span className="text-foreground font-medium">{businesses.length}</span></p>
-                <p>Visible users: <span className="text-foreground font-medium">{users.length}</span></p>
-                <p>Open request reviews: <span className="text-foreground font-medium">{requestSummary.PENDING + requestSummary.REVIEWING}</span></p>
+                <p>
+                  Managed businesses:{" "}
+                  <span className="text-foreground font-medium">
+                    {businesses.length}
+                  </span>
+                </p>
+                <p>
+                  Visible users:{" "}
+                  <span className="text-foreground font-medium">
+                    {users.length}
+                  </span>
+                </p>
+                <p>
+                  Open request reviews:{" "}
+                  <span className="text-foreground font-medium">
+                    {requestSummary.PENDING + requestSummary.REVIEWING}
+                  </span>
+                </p>
               </div>
             </div>
             <div className="gradient-card rounded-xl border border-border p-6">
-              <h2 className="text-lg font-semibold text-foreground mb-4">Current Access Model</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-4">
+                Current Access Model
+              </h2>
               <div className="space-y-3 text-sm text-muted-foreground">
-                <p>{isAdmin ? "Admins can create owners, investors, and businesses." : "Owners can manage only assigned businesses."}</p>
+                <p>
+                  {isAdmin
+                    ? "Admins can create owners, investors, and businesses."
+                    : "Owners can manage only assigned businesses."}
+                </p>
                 <p>Businesses must have at least one owner at creation.</p>
                 <p>Investor assignment requires a positive invested amount.</p>
               </div>
@@ -431,24 +519,41 @@ export default function AdminPage() {
               <table className="w-full">
                 <thead>
                   <tr className="bg-secondary/50 border-b border-border">
-                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">Business</th>
-                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">Group</th>
-                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">Stage</th>
-                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">Status</th>
-                    <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">Actions</th>
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">
+                      Business
+                    </th>
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">
+                      Group
+                    </th>
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">
+                      Stage
+                    </th>
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">
+                      Status
+                    </th>
+                    <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredBusinesses.map((business: any) => (
-                    <tr key={business.slug || business._id} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
+                    <tr
+                      key={business.slug || business._id}
+                      className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors"
+                    >
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-lg">
                             {business.logo || "🏢"}
                           </div>
                           <div>
-                            <p className="font-medium text-foreground">{business.name}</p>
-                            <p className="text-xs text-muted-foreground truncate max-w-[200px]">{business.tagline}</p>
+                            <p className="font-medium text-foreground">
+                              {business.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground truncate max-w-[200px]">
+                              {business.tagline}
+                            </p>
                           </div>
                         </div>
                       </td>
@@ -457,12 +562,16 @@ export default function AdminPage() {
                           {business.sector}
                         </span>
                       </td>
-                      <td className="p-4 text-sm text-muted-foreground">{business.stage}</td>
+                      <td className="p-4 text-sm text-muted-foreground">
+                        {business.stage}
+                      </td>
                       <td className="p-4">
                         <span
                           className={cn(
                             "px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase",
-                            business.isPublished ? "bg-[#14432A] text-[#34D399]" : "bg-secondary text-muted-foreground"
+                            business.isPublished
+                              ? "bg-[#14432A] text-[#34D399]"
+                              : "bg-secondary text-muted-foreground"
                           )}
                         >
                           {business.isPublished ? "Published" : "Draft"}
@@ -471,11 +580,17 @@ export default function AdminPage() {
                       <td className="p-4">
                         <div className="flex items-center justify-end gap-2">
                           <button
-                            onClick={() => togglePublishMutation.mutate(business._id)}
+                            onClick={() =>
+                              togglePublishMutation.mutate(business._id)
+                            }
                             className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
                             title="Toggle publish"
                           >
-                            {business.isPublished ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            {business.isPublished ? (
+                              <EyeOff className="w-4 h-4" />
+                            ) : (
+                              <Eye className="w-4 h-4" />
+                            )}
                           </button>
                           <button
                             onClick={() => {
@@ -488,7 +603,9 @@ export default function AdminPage() {
                           </button>
                           {isAdmin && (
                             <button
-                              onClick={() => deleteBusinessMutation.mutate(business._id)}
+                              onClick={() =>
+                                deleteBusinessMutation.mutate(business._id)
+                              }
                               className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-[#EF4444] hover:bg-secondary transition-colors"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -510,27 +627,50 @@ export default function AdminPage() {
               <table className="w-full">
                 <thead>
                   <tr className="bg-secondary/50 border-b border-border">
-                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">User</th>
-                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">Email</th>
-                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">Role</th>
-                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">Status</th>
-                    <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">Actions</th>
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">
+                      User
+                    </th>
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">
+                      Email
+                    </th>
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">
+                      Role
+                    </th>
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">
+                      Status
+                    </th>
+                    <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredUsers.map((account: any) => (
-                    <tr key={account.id} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
+                    <tr
+                      key={account.id}
+                      className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors"
+                    >
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-sm font-bold text-foreground">
                             {account.name.charAt(0)}
                           </div>
-                          <span className="font-medium text-foreground">{account.name}</span>
+                          <span className="font-medium text-foreground">
+                            {account.name}
+                          </span>
                         </div>
                       </td>
-                      <td className="p-4 text-sm text-muted-foreground">{account.email}</td>
+                      <td className="p-4 text-sm text-muted-foreground">
+                        {account.email}
+                      </td>
                       <td className="p-4">
-                        <span className={cn("px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase", ROLE_BADGES[account.role] || "bg-secondary text-muted-foreground")}>
+                        <span
+                          className={cn(
+                            "px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase",
+                            ROLE_BADGES[account.role] ||
+                              "bg-secondary text-muted-foreground"
+                          )}
+                        >
                           {account.role}
                         </span>
                       </td>
@@ -538,7 +678,9 @@ export default function AdminPage() {
                         <span
                           className={cn(
                             "px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase",
-                            account.status === "active" ? "bg-[#14432A] text-[#34D399]" : "bg-secondary text-muted-foreground"
+                            account.status === "active"
+                              ? "bg-[#14432A] text-[#34D399]"
+                              : "bg-secondary text-muted-foreground"
                           )}
                         >
                           {account.status}
@@ -576,16 +718,31 @@ export default function AdminPage() {
               <div className="flex flex-col gap-5">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                   <div>
-                    <h2 className="text-lg font-semibold text-foreground">Request Review Queue</h2>
+                    <h2 className="text-lg font-semibold text-foreground">
+                      Request Review Queue
+                    </h2>
                     <p className="text-sm text-muted-foreground">
-                      Default view shows pending and reviewing requests, sorted from earliest to oldest.
+                      Default view shows pending and reviewing requests, sorted
+                      from earliest to oldest.
                     </p>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <Button variant={requestGroupMode === "flat" ? "default" : "outline"} size="sm" onClick={() => setRequestGroupMode("flat")}>
+                    <Button
+                      variant={
+                        requestGroupMode === "flat" ? "default" : "outline"
+                      }
+                      size="sm"
+                      onClick={() => setRequestGroupMode("flat")}
+                    >
                       Flat List
                     </Button>
-                    <Button variant={requestGroupMode === "business" ? "default" : "outline"} size="sm" onClick={() => setRequestGroupMode("business")}>
+                    <Button
+                      variant={
+                        requestGroupMode === "business" ? "default" : "outline"
+                      }
+                      size="sm"
+                      onClick={() => setRequestGroupMode("business")}
+                    >
                       Group by Business
                     </Button>
                   </div>
@@ -593,7 +750,9 @@ export default function AdminPage() {
 
                 <div className="grid gap-4 lg:grid-cols-[1fr,220px,180px]">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Status Filter</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                      Status Filter
+                    </p>
                     <div className="flex flex-wrap gap-2">
                       {REQUEST_STATUSES.map((status) => {
                         const isActive = requestStatuses.includes(status)
@@ -610,7 +769,9 @@ export default function AdminPage() {
                             )}
                           >
                             {STATUS_LABELS[status]}
-                            <span className="ml-2 tabular-nums text-xs">{requestSummary[status]}</span>
+                            <span className="ml-2 tabular-nums text-xs">
+                              {requestSummary[status]}
+                            </span>
                           </button>
                         )
                       })}
@@ -618,7 +779,9 @@ export default function AdminPage() {
                   </div>
 
                   <label className="flex flex-col gap-2 text-sm text-muted-foreground">
-                    <span className="text-xs font-semibold uppercase tracking-wide">Sort</span>
+                    <span className="text-xs font-semibold uppercase tracking-wide">
+                      Sort
+                    </span>
                     <select
                       value={requestSort}
                       onChange={(e) => {
@@ -633,7 +796,9 @@ export default function AdminPage() {
                   </label>
 
                   <label className="flex flex-col gap-2 text-sm text-muted-foreground">
-                    <span className="text-xs font-semibold uppercase tracking-wide">Rows per page</span>
+                    <span className="text-xs font-semibold uppercase tracking-wide">
+                      Rows per page
+                    </span>
                     <select
                       value={requestPageSize}
                       onChange={(e) => {
@@ -655,7 +820,10 @@ export default function AdminPage() {
               <div className="gradient-card rounded-xl border border-border p-6">
                 <div className="space-y-3">
                   {Array.from({ length: 5 }).map((_, index) => (
-                    <div key={index} className="rounded-xl border border-border bg-secondary/30 p-4">
+                    <div
+                      key={index}
+                      className="rounded-xl border border-border bg-secondary/30 p-4"
+                    >
                       <div className="mb-3 flex gap-2">
                         <div className="h-5 w-28 animate-pulse rounded-full bg-secondary" />
                         <div className="h-5 w-24 animate-pulse rounded-full bg-secondary" />
@@ -674,31 +842,64 @@ export default function AdminPage() {
                 <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
                   <Clock className="w-8 h-8 text-muted-foreground" />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">No requests match this view</h3>
-                <p className="text-muted-foreground">Adjust the status filters or sort to inspect a different part of the queue.</p>
+                <h3 className="text-lg font-semibold text-foreground mb-2">
+                  No requests match this view
+                </h3>
+                <p className="text-muted-foreground">
+                  Adjust the status filters or sort to inspect a different part
+                  of the queue.
+                </p>
               </div>
             ) : requestGroupMode === "business" ? (
               <div className="space-y-4">
                 {groupedRequests.map((group) => (
-                  <div key={group.businessName} className="gradient-card rounded-xl border border-border overflow-hidden">
+                  <div
+                    key={group.businessName}
+                    className="gradient-card rounded-xl border border-border overflow-hidden"
+                  >
                     <div className="border-b border-border px-5 py-4">
-                      <h3 className="font-semibold text-foreground">{group.businessName}</h3>
-                      <p className="text-sm text-muted-foreground">{group.items.length} request{group.items.length === 1 ? "" : "s"} on this page</p>
+                      <h3 className="font-semibold text-foreground">
+                        {group.businessName}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {group.items.length} request
+                        {group.items.length === 1 ? "" : "s"} on this page
+                      </p>
                     </div>
                     <div className="divide-y divide-border">
                       {group.items.map((approval) => (
-                        <div key={approval.id} className="p-5 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+                        <div
+                          key={approval.id}
+                          className="p-5 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4"
+                        >
                           <div className="space-y-2">
                             <div className="flex flex-wrap items-center gap-2">
-                              <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-full">{approval.typeLabel}</span>
-                              <span className={cn("text-xs px-2 py-0.5 rounded-full", STATUS_BADGES[approval.status])}>{STATUS_LABELS[approval.status]}</span>
+                              <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                                {approval.typeLabel}
+                              </span>
+                              <span
+                                className={cn(
+                                  "text-xs px-2 py-0.5 rounded-full",
+                                  STATUS_BADGES[approval.status]
+                                )}
+                              >
+                                {STATUS_LABELS[approval.status]}
+                              </span>
                             </div>
                             <p className="text-sm text-foreground">
                               Requested by {approval.requestedBy}
-                              {approval.requestedByEmail ? ` (${approval.requestedByEmail})` : ""}
+                              {approval.requestedByEmail
+                                ? ` (${approval.requestedByEmail})`
+                                : ""}
                             </p>
-                            <p className="text-sm text-muted-foreground">{approval.dateLabel}</p>
-                            {approval.message && <p className="text-sm text-muted-foreground max-w-3xl">{approval.message}</p>}
+                            <p className="text-sm text-muted-foreground">
+                              {approval.dateLabel}
+                            </p>
+                            {approval.message && (
+                              <p className="text-sm text-muted-foreground max-w-3xl">
+                                {approval.message}
+                              </p>
+                            )}
                           </div>
                           <div className="flex flex-wrap items-center gap-2">
                             <select
@@ -731,37 +932,75 @@ export default function AdminPage() {
                   <table className="w-full">
                     <thead>
                       <tr className="bg-secondary/50 border-b border-border">
-                        <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">Business</th>
-                        <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">Type</th>
-                        <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">Requested By</th>
-                        <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">Status</th>
-                        <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">Created</th>
-                        <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">Message</th>
-                        <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">Update</th>
+                        <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">
+                          Business
+                        </th>
+                        <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">
+                          Type
+                        </th>
+                        <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">
+                          Requested By
+                        </th>
+                        <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">
+                          Status
+                        </th>
+                        <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">
+                          Created
+                        </th>
+                        <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">
+                          Message
+                        </th>
+                        <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider p-4">
+                          Update
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       {requests.map((approval) => (
-                        <tr key={approval.id} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors align-top">
+                        <tr
+                          key={approval.id}
+                          className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors align-top"
+                        >
                           <td className="p-4">
                             <div>
-                              <p className="font-medium text-foreground">{approval.businessName}</p>
-                              {approval.businessSlug && <p className="text-xs text-muted-foreground">/{approval.businessSlug}</p>}
+                              <p className="font-medium text-foreground">
+                                {approval.businessName}
+                              </p>
+                              {approval.businessSlug && (
+                                <p className="text-xs text-muted-foreground">
+                                  /{approval.businessSlug}
+                                </p>
+                              )}
                             </div>
                           </td>
                           <td className="p-4">
-                            <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-full">{approval.typeLabel}</span>
+                            <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                              {approval.typeLabel}
+                            </span>
                           </td>
                           <td className="p-4 text-sm text-muted-foreground">
                             <p>{approval.requestedBy}</p>
-                            {approval.requestedByEmail && <p>{approval.requestedByEmail}</p>}
+                            {approval.requestedByEmail && (
+                              <p>{approval.requestedByEmail}</p>
+                            )}
                           </td>
                           <td className="p-4">
-                            <span className={cn("text-xs px-2 py-0.5 rounded-full", STATUS_BADGES[approval.status])}>{STATUS_LABELS[approval.status]}</span>
+                            <span
+                              className={cn(
+                                "text-xs px-2 py-0.5 rounded-full",
+                                STATUS_BADGES[approval.status]
+                              )}
+                            >
+                              {STATUS_LABELS[approval.status]}
+                            </span>
                           </td>
-                          <td className="p-4 text-sm text-muted-foreground whitespace-nowrap">{approval.dateLabel}</td>
+                          <td className="p-4 text-sm text-muted-foreground whitespace-nowrap">
+                            {approval.dateLabel}
+                          </td>
                           <td className="p-4 text-sm text-muted-foreground max-w-sm">
-                            <p className="line-clamp-3">{approval.message || "No message"}</p>
+                            <p className="line-clamp-3">
+                              {approval.message || "No message"}
+                            </p>
                           </td>
                           <td className="p-4">
                             <div className="flex justify-end">
@@ -794,16 +1033,27 @@ export default function AdminPage() {
 
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <p className="text-sm text-muted-foreground">
-                Showing page <span className="text-foreground font-medium">{requestPagination.page}</span> of{" "}
-                <span className="text-foreground font-medium">{requestPagination.totalPages}</span>
+                Showing page{" "}
+                <span className="text-foreground font-medium">
+                  {requestPagination.page}
+                </span>{" "}
+                of{" "}
+                <span className="text-foreground font-medium">
+                  {requestPagination.totalPages}
+                </span>
                 {" • "}
-                <span className="text-foreground font-medium">{requestPagination.total}</span> total requests
+                <span className="text-foreground font-medium">
+                  {requestPagination.total}
+                </span>{" "}
+                total requests
               </p>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setRequestPage((page) => Math.max(page - 1, 1))}
+                  onClick={() =>
+                    setRequestPage((page) => Math.max(page - 1, 1))
+                  }
                   disabled={!requestPagination.hasPreviousPage}
                 >
                   <ChevronLeft className="w-4 h-4 mr-1" />
@@ -825,20 +1075,32 @@ export default function AdminPage() {
 
         {activeTab === "Analytics" && (
           <div className="gradient-card rounded-xl border border-border p-8">
-            <h2 className="text-lg font-semibold text-foreground mb-2">Analytics</h2>
-            <p className="text-muted-foreground mb-6">Current live totals derived from loaded management data.</p>
+            <h2 className="text-lg font-semibold text-foreground mb-2">
+              Analytics
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              Current live totals derived from loaded management data.
+            </p>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="rounded-xl border border-border p-4">
-                <p className="text-sm text-muted-foreground">Managed Businesses</p>
-                <p className="text-2xl font-bold text-foreground">{businesses.length}</p>
+                <p className="text-sm text-muted-foreground">
+                  Managed Businesses
+                </p>
+                <p className="text-2xl font-bold text-foreground">
+                  {businesses.length}
+                </p>
               </div>
               <div className="rounded-xl border border-border p-4">
                 <p className="text-sm text-muted-foreground">Visible Users</p>
-                <p className="text-2xl font-bold text-foreground">{users.length}</p>
+                <p className="text-2xl font-bold text-foreground">
+                  {users.length}
+                </p>
               </div>
               <div className="rounded-xl border border-border p-4">
                 <p className="text-sm text-muted-foreground">Open Requests</p>
-                <p className="text-2xl font-bold text-foreground">{requestSummary.PENDING + requestSummary.REVIEWING}</p>
+                <p className="text-2xl font-bold text-foreground">
+                  {requestSummary.PENDING + requestSummary.REVIEWING}
+                </p>
               </div>
               <div className="rounded-xl border border-border p-4">
                 <p className="text-sm text-muted-foreground">Documents</p>
@@ -850,20 +1112,34 @@ export default function AdminPage() {
 
         {activeTab === "Settings" && (
           <div className="gradient-card rounded-xl border border-border p-8">
-            <h2 className="text-lg font-semibold text-foreground mb-2">Settings</h2>
-            <p className="text-muted-foreground mb-6">Administrative controls already available in this build.</p>
+            <h2 className="text-lg font-semibold text-foreground mb-2">
+              Settings
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              Administrative controls already available in this build.
+            </p>
             <div className="space-y-4">
               <div className="rounded-xl border border-border p-4">
                 <p className="font-medium text-foreground">User Creation</p>
-                <p className="text-sm text-muted-foreground">Admins can create owners and investors. Owners can create investors only.</p>
+                <p className="text-sm text-muted-foreground">
+                  Admins can create owners and investors. Owners can create
+                  investors only.
+                </p>
               </div>
               <div className="rounded-xl border border-border p-4">
-                <p className="font-medium text-foreground">Business Ownership</p>
-                <p className="text-sm text-muted-foreground">Businesses require at least one owner, and owners may only manage assigned businesses.</p>
+                <p className="font-medium text-foreground">
+                  Business Ownership
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Businesses require at least one owner, and owners may only
+                  manage assigned businesses.
+                </p>
               </div>
               <div className="rounded-xl border border-border p-4">
                 <p className="font-medium text-foreground">Equity Assignment</p>
-                <p className="text-sm text-muted-foreground">Investor assignment requires a positive invested amount.</p>
+                <p className="text-sm text-muted-foreground">
+                  Investor assignment requires a positive invested amount.
+                </p>
               </div>
             </div>
           </div>

@@ -15,7 +15,10 @@ interface RequestEquityDialogProps {
   onClose: () => void
 }
 
-export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProps) {
+export function RequestEquityDialog({
+  isOpen,
+  onClose,
+}: RequestEquityDialogProps) {
   const [step, setStep] = useState<1 | 2>(1)
   const [formData, setFormData] = useState({
     businessId: "",
@@ -23,17 +26,17 @@ export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProp
     requestedAmount: "",
     requestedShares: "",
     requestedEquityPercentage: "",
-    message: ""
+    message: "",
   })
 
   // Fetch all published businesses for the dropdown
   const { data: businesses = [] } = useQuery({
-    queryKey: ['all-businesses'],
+    queryKey: ["all-businesses"],
     queryFn: async () => {
-      const res = await api.get('/businesses?limit=50')
+      const res = await api.get("/businesses?limit=50")
       return res.data.data.businesses
     },
-    enabled: isOpen
+    enabled: isOpen,
   })
 
   const submitRequest = useMutation({
@@ -44,12 +47,12 @@ export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProp
         requestedShares: Number(data.requestedShares) || 0,
         requestedEquityPercentage: Number(data.requestedEquityPercentage) || 0,
       }
-      const res = await api.post('/requests', payload)
+      const res = await api.post("/requests", payload)
       return res.data
     },
     onSuccess: () => {
       setStep(2)
-    }
+    },
   })
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -68,7 +71,7 @@ export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProp
         requestedAmount: "",
         requestedShares: "",
         requestedEquityPercentage: "",
-        message: ""
+        message: "",
       })
     }, 300)
   }
@@ -94,8 +97,12 @@ export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProp
               {/* Header */}
               <div className="flex items-center justify-between border-b border-border p-6">
                 <div>
-                  <h2 className="text-xl font-bold text-foreground">Request Allocation</h2>
-                  <p className="text-sm text-muted-foreground mt-1">Submit an equity or investment request</p>
+                  <h2 className="text-xl font-bold text-foreground">
+                    Request Allocation
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Submit an equity or investment request
+                  </p>
                 </div>
                 <button
                   onClick={handleClose}
@@ -109,11 +116,15 @@ export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProp
                 <form onSubmit={handleSubmit} className="p-6 space-y-5">
                   {/* Form Content */}
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">Target Company *</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Target Company *
+                    </label>
                     <select
                       required
                       value={formData.businessId}
-                      onChange={(e) => setFormData({ ...formData, businessId: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, businessId: e.target.value })
+                      }
                       className="w-full h-11 px-3 rounded-lg bg-secondary/50 border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                     >
                       <option value="">Select a company...</option>
@@ -126,71 +137,103 @@ export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProp
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-3 block">Request Type *</label>
+                    <label className="text-sm font-medium text-foreground mb-3 block">
+                      Request Type *
+                    </label>
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                      <label className={cn(
-                        "flex items-center justify-center p-3 rounded-xl border cursor-pointer transition-all",
-                        formData.type === "NEW_INVESTMENT"
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border bg-secondary/30 text-muted-foreground hover:bg-secondary/50"
-                      )}>
+                      <label
+                        className={cn(
+                          "flex items-center justify-center p-3 rounded-xl border cursor-pointer transition-all",
+                          formData.type === "NEW_INVESTMENT"
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-border bg-secondary/30 text-muted-foreground hover:bg-secondary/50"
+                        )}
+                      >
                         <input
                           type="radio"
                           className="sr-only"
                           checked={formData.type === "NEW_INVESTMENT"}
-                          onChange={() => setFormData({ ...formData, type: "NEW_INVESTMENT" })}
+                          onChange={() =>
+                            setFormData({ ...formData, type: "NEW_INVESTMENT" })
+                          }
                         />
-                        <span className="text-sm font-semibold">New Investment</span>
+                        <span className="text-sm font-semibold">
+                          New Investment
+                        </span>
                       </label>
-                      <label className={cn(
-                        "flex items-center justify-center p-3 rounded-xl border cursor-pointer transition-all",
-                        formData.type === "REVISION"
-                          ? "border-[#F59E0B] bg-[#F59E0B]/10 text-[#F59E0B]"
-                          : "border-border bg-secondary/30 text-muted-foreground hover:bg-secondary/50"
-                      )}>
+                      <label
+                        className={cn(
+                          "flex items-center justify-center p-3 rounded-xl border cursor-pointer transition-all",
+                          formData.type === "REVISION"
+                            ? "border-[#F59E0B] bg-[#F59E0B]/10 text-[#F59E0B]"
+                            : "border-border bg-secondary/30 text-muted-foreground hover:bg-secondary/50"
+                        )}
+                      >
                         <input
                           type="radio"
                           className="sr-only"
                           checked={formData.type === "REVISION"}
-                          onChange={() => setFormData({ ...formData, type: "REVISION" })}
+                          onChange={() =>
+                            setFormData({ ...formData, type: "REVISION" })
+                          }
                         />
-                        <span className="text-sm font-semibold">Equity Revision</span>
+                        <span className="text-sm font-semibold">
+                          Equity Revision
+                        </span>
                       </label>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="text-sm font-medium text-foreground mb-2 block">Amount (₹) *</label>
+                      <label className="text-sm font-medium text-foreground mb-2 block">
+                        Amount (₹) *
+                      </label>
                       <Input
                         required
                         type="number"
                         placeholder="e.g. 1000000"
                         value={formData.requestedAmount}
-                        onChange={(e) => setFormData({ ...formData, requestedAmount: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            requestedAmount: e.target.value,
+                          })
+                        }
                         className="bg-secondary/50"
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-foreground mb-2 block">Equity %</label>
+                      <label className="text-sm font-medium text-foreground mb-2 block">
+                        Equity %
+                      </label>
                       <Input
                         type="number"
                         step="0.01"
                         placeholder="e.g. 5.5"
                         value={formData.requestedEquityPercentage}
-                        onChange={(e) => setFormData({ ...formData, requestedEquityPercentage: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            requestedEquityPercentage: e.target.value,
+                          })
+                        }
                         className="bg-secondary/50"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">Message / Note</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Message / Note
+                    </label>
                     <textarea
                       rows={3}
                       placeholder="Add any context for the admin..."
                       value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, message: e.target.value })
+                      }
                       className="w-full p-3 rounded-lg bg-secondary/50 border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
                     />
                   </div>
@@ -198,17 +241,25 @@ export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProp
                   {submitRequest.isError && (
                     <div className="flex items-center gap-2 text-sm text-[#EF4444] bg-[#EF4444]/10 p-3 rounded-lg border border-[#EF4444]/20">
                       <AlertCircle className="w-4 h-4 shrink-0" />
-                      <p>{getUserFacingErrorMessage(submitRequest.error, "mutation", "We couldn't submit your request right now.")}</p>
+                      <p>
+                        {getUserFacingErrorMessage(
+                          submitRequest.error,
+                          "mutation",
+                          "We couldn't submit your request right now."
+                        )}
+                      </p>
                     </div>
                   )}
 
                   <div className="pt-2">
-                    <Button 
-                      type="submit" 
-                      className="w-full" 
+                    <Button
+                      type="submit"
+                      className="w-full"
                       disabled={submitRequest.isPending || !formData.businessId}
                     >
-                      {submitRequest.isPending ? "Submitting..." : "Submit Request"}
+                      {submitRequest.isPending
+                        ? "Submitting..."
+                        : "Submit Request"}
                     </Button>
                   </div>
                 </form>
@@ -217,9 +268,13 @@ export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProp
                   <div className="w-16 h-16 rounded-full bg-[#10B981]/10 flex items-center justify-center mx-auto mb-5">
                     <CheckCircle2 className="w-8 h-8 text-[#10B981]" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-2">Request Submitted!</h3>
+                  <h3 className="text-xl font-bold text-foreground mb-2">
+                    Request Submitted!
+                  </h3>
                   <p className="text-muted-foreground mb-6">
-                    Your allocation request has been securely sent to the administrators for review. You will be notified once it is processed.
+                    Your allocation request has been securely sent to the
+                    administrators for review. You will be notified once it is
+                    processed.
                   </p>
                   <Button onClick={handleClose} className="w-full">
                     Done

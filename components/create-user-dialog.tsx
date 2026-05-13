@@ -15,27 +15,31 @@ interface CreateUserDialogProps {
   currentUserRole?: "admin" | "owner"
 }
 
-export function CreateUserDialog({ isOpen, onClose, currentUserRole = "admin" }: CreateUserDialogProps) {
+export function CreateUserDialog({
+  isOpen,
+  onClose,
+  currentUserRole = "admin",
+}: CreateUserDialogProps) {
   const queryClient = useQueryClient()
   const defaultRole = currentUserRole === "owner" ? "investor" : "investor"
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    role: defaultRole
+    role: defaultRole,
   })
 
   const createUser = useMutation({
     mutationFn: async (data: typeof formData) => {
-      const res = await api.post('/admin/users', data)
+      const res = await api.post("/admin/users", data)
       return res.data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-investors'] })
-      queryClient.invalidateQueries({ queryKey: ['admin-users'] })
-      queryClient.invalidateQueries({ queryKey: ['admin-owners'] })
+      queryClient.invalidateQueries({ queryKey: ["admin-investors"] })
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] })
+      queryClient.invalidateQueries({ queryKey: ["admin-owners"] })
       handleClose()
-    }
+    },
   })
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -78,9 +82,13 @@ export function CreateUserDialog({ isOpen, onClose, currentUserRole = "admin" }:
             <div className="gradient-card overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
               <div className="flex items-center justify-between border-b border-border p-6">
                 <div>
-                  <h2 className="text-xl font-bold text-foreground">{isCreatingOwner ? "Create Owner" : "Create Investor"}</h2>
+                  <h2 className="text-xl font-bold text-foreground">
+                    {isCreatingOwner ? "Create Owner" : "Create Investor"}
+                  </h2>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {isCreatingOwner ? "Add a new owner who can manage assigned businesses" : "Add a new investor to the platform"}
+                    {isCreatingOwner
+                      ? "Add a new owner who can manage assigned businesses"
+                      : "Add a new investor to the platform"}
                   </p>
                 </div>
                 <button
@@ -94,10 +102,14 @@ export function CreateUserDialog({ isOpen, onClose, currentUserRole = "admin" }:
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
                 {currentUserRole === "admin" && (
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">Account Type</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Account Type
+                    </label>
                     <select
                       value={formData.role}
-                      onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, role: e.target.value })
+                      }
                       className="w-full h-11 px-3 rounded-lg bg-secondary/50 border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                     >
                       <option value="investor">Investor</option>
@@ -107,37 +119,49 @@ export function CreateUserDialog({ isOpen, onClose, currentUserRole = "admin" }:
                 )}
 
                 <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">Full Name</label>
+                  <label className="text-sm font-medium text-foreground mb-2 block">
+                    Full Name
+                  </label>
                   <Input
                     required
                     type="text"
                     placeholder="e.g. Aditya Sharma"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     className="bg-secondary/50"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">Email Address</label>
+                  <label className="text-sm font-medium text-foreground mb-2 block">
+                    Email Address
+                  </label>
                   <Input
                     required
                     type="email"
                     placeholder="e.g. aditya@example.com"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                     className="bg-secondary/50"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">Temporary Password</label>
+                  <label className="text-sm font-medium text-foreground mb-2 block">
+                    Temporary Password
+                  </label>
                   <Input
                     required
                     type="password"
                     placeholder="e.g. welcome123"
                     value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
                     className="bg-secondary/50"
                   />
                 </div>
@@ -145,12 +169,23 @@ export function CreateUserDialog({ isOpen, onClose, currentUserRole = "admin" }:
                 {createUser.isError && (
                   <div className="flex items-center gap-2 text-sm text-[#EF4444] bg-[#EF4444]/10 p-3 rounded-lg border border-[#EF4444]/20">
                     <AlertCircle className="w-4 h-4 shrink-0" />
-                    <p>{getUserFacingErrorMessage(createUser.error, "mutation", "We couldn't create this account right now.")}</p>
+                    <p>
+                      {getUserFacingErrorMessage(
+                        createUser.error,
+                        "mutation",
+                        "We couldn't create this account right now."
+                      )}
+                    </p>
                   </div>
                 )}
 
                 <div className="pt-4 flex flex-col-reverse gap-3 sm:flex-row">
-                  <Button type="button" variant="outline" onClick={handleClose} className="w-full sm:flex-1">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleClose}
+                    className="w-full sm:flex-1"
+                  >
                     Cancel
                   </Button>
                   <Button
@@ -158,7 +193,11 @@ export function CreateUserDialog({ isOpen, onClose, currentUserRole = "admin" }:
                     className="w-full sm:flex-1"
                     disabled={createUser.isPending}
                   >
-                    {createUser.isPending ? "Creating..." : isCreatingOwner ? "Create Owner" : "Create Investor"}
+                    {createUser.isPending
+                      ? "Creating..."
+                      : isCreatingOwner
+                        ? "Create Owner"
+                        : "Create Investor"}
                   </Button>
                 </div>
               </form>

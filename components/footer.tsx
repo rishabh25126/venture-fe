@@ -26,28 +26,31 @@ export function Footer() {
               <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
                 <TrendingUp className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-lg font-semibold text-foreground">Irresistible</span>
+              <span className="text-lg font-semibold text-foreground">
+                Irresistible
+              </span>
             </Link>
             <p className="text-sm text-muted-foreground max-w-sm mb-6">
-              Connecting compelling businesses with strategic investors. Your gateway to discovering and backing high-potential ventures.
+              Connecting compelling businesses with strategic investors. Your
+              gateway to discovering and backing high-potential ventures.
             </p>
             <div className="flex items-center gap-3">
-              <a 
-                href="#" 
+              <a
+                href="#"
                 className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors"
                 aria-label="Twitter"
               >
                 <Twitter className="w-4 h-4" />
               </a>
-              <a 
-                href="#" 
+              <a
+                href="#"
                 className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="w-4 h-4" />
               </a>
-              <a 
-                href="#" 
+              <a
+                href="#"
                 className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors"
                 aria-label="GitHub"
               >
@@ -58,11 +61,13 @@ export function Footer() {
 
           {/* Platform Links */}
           <div>
-            <h4 className="text-sm font-semibold text-foreground mb-4">Platform</h4>
+            <h4 className="text-sm font-semibold text-foreground mb-4">
+              Platform
+            </h4>
             <ul className="space-y-3">
               {footerLinks.platform.map((link) => (
                 <li key={link.label}>
-                  <Link 
+                  <Link
                     href={link.href}
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
@@ -75,11 +80,13 @@ export function Footer() {
 
           {/* Legal Links */}
           <div>
-            <h4 className="text-sm font-semibold text-foreground mb-4">Legal</h4>
+            <h4 className="text-sm font-semibold text-foreground mb-4">
+              Legal
+            </h4>
             <ul className="space-y-3">
               {footerLinks.legal.map((link) => (
                 <li key={link.label}>
-                  <Link 
+                  <Link
                     href={link.href}
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
@@ -98,7 +105,9 @@ export function Footer() {
               © {new Date().getFullYear()} Irresistible. All rights reserved.
             </p>
             <p className="text-xs text-muted-foreground text-center md:text-right max-w-md">
-              Investment involves risk. Past performance is not indicative of future results. Please read all relevant documents before investing.
+              Investment involves risk. Past performance is not indicative of
+              future results. Please read all relevant documents before
+              investing.
             </p>
           </div>
         </div>

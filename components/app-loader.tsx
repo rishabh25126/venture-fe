@@ -1,21 +1,21 @@
-"use client";
+"use client"
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useIsFetching, useIsMutating } from "@tanstack/react-query";
-import { TrendingUp } from "lucide-react";
-import { Spinner } from "@/components/ui/spinner";
-import { cn } from "@/lib/utils";
-import { useRequestFeedback } from "@/lib/ui/request-feedback-store";
+import { useEffect, useMemo, useRef, useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { useIsFetching, useIsMutating } from "@tanstack/react-query"
+import { TrendingUp } from "lucide-react"
+import { Spinner } from "@/components/ui/spinner"
+import { cn } from "@/lib/utils"
+import { useRequestFeedback } from "@/lib/ui/request-feedback-store"
 
 export function ScreenLoader({
   title = "Loading",
   description,
   className,
 }: {
-  title?: string;
-  description?: string;
-  className?: string;
+  title?: string
+  description?: string
+  className?: string
 }) {
   return (
     <div className={cn("min-h-screen bg-background", className)}>
@@ -38,59 +38,59 @@ export function ScreenLoader({
         </motion.div>
       </div>
     </div>
-  );
+  )
 }
 
 export function GlobalLoader() {
-  const { activeRequestCount, blockingCount } = useRequestFeedback();
-  const isFetching = useIsFetching();
-  const isMutating = useIsMutating();
-  const [isVisible, setIsVisible] = useState(false);
-  const shownAtRef = useRef<number | null>(null);
+  const { activeRequestCount, blockingCount } = useRequestFeedback()
+  const isFetching = useIsFetching()
+  const isMutating = useIsMutating()
+  const [isVisible, setIsVisible] = useState(false)
+  const shownAtRef = useRef<number | null>(null)
 
   const hasReactQueryFallbackActivity =
-    activeRequestCount === 0 && isFetching + isMutating > 0;
-  const hasActivity = activeRequestCount > 0 || hasReactQueryFallbackActivity;
+    activeRequestCount === 0 && isFetching + isMutating > 0
+  const hasActivity = activeRequestCount > 0 || hasReactQueryFallbackActivity
 
   const statusLabel = useMemo(() => {
     if (activeRequestCount > 1 || isFetching + isMutating > 1) {
-      return "Syncing data";
+      return "Syncing data"
     }
-    return "Loading";
-  }, [activeRequestCount, isFetching, isMutating]);
+    return "Loading"
+  }, [activeRequestCount, isFetching, isMutating])
 
   useEffect(() => {
     if (blockingCount > 0) {
-      setIsVisible(false);
-      shownAtRef.current = null;
-      return;
+      setIsVisible(false)
+      shownAtRef.current = null
+      return
     }
 
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
 
     if (hasActivity) {
       timeoutId = setTimeout(() => {
-        shownAtRef.current = Date.now();
-        setIsVisible(true);
-      }, 120);
+        shownAtRef.current = Date.now()
+        setIsVisible(true)
+      }, 120)
     } else if (shownAtRef.current) {
-      const elapsed = Date.now() - shownAtRef.current;
-      const remaining = Math.max(0, 240 - elapsed);
+      const elapsed = Date.now() - shownAtRef.current
+      const remaining = Math.max(0, 240 - elapsed)
       timeoutId = setTimeout(() => {
-        shownAtRef.current = null;
-        setIsVisible(false);
-      }, remaining);
+        shownAtRef.current = null
+        setIsVisible(false)
+      }, remaining)
     } else {
-      setIsVisible(false);
+      setIsVisible(false)
     }
 
     return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, [blockingCount, hasActivity]);
+      if (timeoutId) clearTimeout(timeoutId)
+    }
+  }, [blockingCount, hasActivity])
 
   if (!isVisible || blockingCount > 0) {
-    return null;
+    return null
   }
 
   return (
@@ -117,5 +117,5 @@ export function GlobalLoader() {
         </div>
       </motion.div>
     </AnimatePresence>
-  );
+  )
 }

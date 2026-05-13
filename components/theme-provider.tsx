@@ -1,11 +1,11 @@
-'use client'
+"use client"
 
-import * as React from 'react'
+import * as React from "react"
 import {
   useTheme,
   ThemeProvider as NextThemesProvider,
   type ThemeProviderProps,
-} from 'next-themes'
+} from "next-themes"
 
 function ThemePersistenceBridge() {
   const { resolvedTheme } = useTheme()

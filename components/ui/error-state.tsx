@@ -1,5 +1,5 @@
-import { AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { AlertCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export function ErrorState({
   title = "Something went wrong",
@@ -7,10 +7,10 @@ export function ErrorState({
   actionLabel,
   onAction,
 }: {
-  title?: string;
-  message?: string;
-  actionLabel?: string;
-  onAction?: () => void;
+  title?: string
+  message?: string
+  actionLabel?: string
+  onAction?: () => void
 }) {
   return (
     <div className="rounded-2xl border border-border bg-card/90 p-8 text-center shadow-sm">
@@ -18,12 +18,14 @@ export function ErrorState({
         <AlertCircle className="h-6 w-6" />
       </div>
       <h3 className="text-lg font-semibold text-foreground">{title}</h3>
-      <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">{message}</p>
+      <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
+        {message}
+      </p>
       {actionLabel && onAction ? (
         <Button className="mt-5" variant="outline" onClick={onAction}>
           {actionLabel}
         </Button>
       ) : null}
     </div>
-  );
+  )
 }

@@ -2,22 +2,30 @@
 
 import { useState, use } from "react"
 import Link from "next/link"
-import { 
-  ArrowLeft, 
-  ArrowUpRight, 
-  Building2, 
-  Calendar, 
-  MapPin, 
-  Users, 
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  Building2,
+  Calendar,
+  MapPin,
+  Users,
   Linkedin,
   FileText,
   TrendingUp,
   Lock,
   X,
   AlertCircle,
-  CheckCircle2
+  CheckCircle2,
 } from "lucide-react"
-import { Area, AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
+import {
+  Area,
+  AreaChart,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { ScreenLoader } from "@/components/app-loader"
@@ -49,7 +57,8 @@ const stageColors: Record<string, { bg: string; text: string }> = {
 
 function formatFundingAsk(amount?: number) {
   if (!amount) return "TBD"
-  if (amount >= 10000000) return `₹${(amount / 10000000).toFixed(amount % 10000000 === 0 ? 0 : 1)}Cr`
+  if (amount >= 10000000)
+    return `₹${(amount / 10000000).toFixed(amount % 10000000 === 0 ? 0 : 1)}Cr`
   return `₹${(amount / 100000).toFixed(amount % 100000 === 0 ? 0 : 1)}L`
 }
 
@@ -66,10 +75,13 @@ function normalizeBusiness(business: any) {
     stage: business.stage,
     fundingAsk: formatFundingAsk(business.fundingAsk),
     fundingProgress: 0,
-    founded: business.createdAt ? new Date(business.createdAt).getFullYear().toString() : "TBD",
+    founded: business.createdAt
+      ? new Date(business.createdAt).getFullYear().toString()
+      : "TBD",
     hq: "India",
     teamSize: business.team?.length || 0,
-    description: business.description || "Company profile details will be updated soon.",
+    description:
+      business.description || "Company profile details will be updated soon.",
     problem: business.problem || "Problem statement will be updated soon.",
     solution: business.solution || "Solution details will be updated soon.",
     team: business.team || [],
@@ -81,19 +93,45 @@ function normalizeBusiness(business: any) {
       mrr: "TBD",
     },
     valuationHistory: [
-      { date: "Seed", value: Math.max(1, Math.round((business.fundingAsk || 10000000) / 10000000)) },
-      { date: "Current", value: Math.max(2, Math.round(((business.fundingAsk || 10000000) / 10000000) * (1 + growth / 100))) },
+      {
+        date: "Seed",
+        value: Math.max(
+          1,
+          Math.round((business.fundingAsk || 10000000) / 10000000)
+        ),
+      },
+      {
+        date: "Current",
+        value: Math.max(
+          2,
+          Math.round(
+            ((business.fundingAsk || 10000000) / 10000000) * (1 + growth / 100)
+          )
+        ),
+      },
     ],
   }
 }
 
-export default function BusinessProfilePage({ params }: { params: Promise<{ id: string }> }) {
+export default function BusinessProfilePage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
   const resolvedParams = use(params)
   const [activeTab, setActiveTab] = useState("Overview")
   const [isInterestModalOpen, setIsInterestModalOpen] = useState(false)
-  const [interestForm, setInterestForm] = useState({ name: "", email: "", message: "" })
+  const [interestForm, setInterestForm] = useState({
+    name: "",
+    email: "",
+    message: "",
+  })
 
-  const { data: business, isLoading, error } = useQuery({
+  const {
+    data: business,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["business", resolvedParams.id],
     queryFn: async () => {
       const res = await api.get(`/businesses/${resolvedParams.id}`)
@@ -102,7 +140,11 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
   })
 
   const submitInterest = useMutation({
-    mutationFn: async (payload: { name: string; email: string; message: string }) => {
+    mutationFn: async (payload: {
+      name: string
+      email: string
+      message: string
+    }) => {
       if (!business?._id) {
         throw new Error("Business is not ready yet.")
       }
@@ -131,7 +173,11 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
         <Navbar />
         <div className="pt-24 pb-16">
           <div className="max-w-[960px] mx-auto px-4 md:px-6">
-            <ScreenLoader title="Loading business" description="Fetching the latest venture profile." className="min-h-[60vh] bg-transparent" />
+            <ScreenLoader
+              title="Loading business"
+              description="Fetching the latest venture profile."
+              className="min-h-[60vh] bg-transparent"
+            />
           </div>
         </div>
         <Footer />
@@ -158,18 +204,24 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
     )
   }
 
-  const sectorStyle = sectorColors[business.sector] || { bg: "bg-secondary", text: "text-muted-foreground" }
-  const stageStyle = stageColors[business.stage] || { bg: "bg-secondary", text: "text-muted-foreground" }
+  const sectorStyle = sectorColors[business.sector] || {
+    bg: "bg-secondary",
+    text: "text-muted-foreground",
+  }
+  const stageStyle = stageColors[business.stage] || {
+    bg: "bg-secondary",
+    text: "text-muted-foreground",
+  }
 
   return (
     <main className="min-h-screen">
       <Navbar />
-      
+
       <div className="pt-24 pb-16">
         <div className="max-w-[1280px] mx-auto px-4 md:px-6">
           {/* Back link */}
-          <Link 
-            href="/businesses" 
+          <Link
+            href="/businesses"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -192,14 +244,28 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
                   </div>
                   <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-2 mb-2">
-                      <span className={cn("px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wide", sectorStyle.bg, sectorStyle.text)}>
+                      <span
+                        className={cn(
+                          "px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wide",
+                          sectorStyle.bg,
+                          sectorStyle.text
+                        )}
+                      >
                         {business.sector}
                       </span>
-                      <span className={cn("px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wide", stageStyle.bg, stageStyle.text)}>
+                      <span
+                        className={cn(
+                          "px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wide",
+                          stageStyle.bg,
+                          stageStyle.text
+                        )}
+                      >
                         {business.stage}
                       </span>
                     </div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">{business.name}</h1>
+                    <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">
+                      {business.name}
+                    </h1>
                     <p className="text-muted-foreground">{business.tagline}</p>
                   </div>
                 </div>
@@ -207,15 +273,26 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
                 {/* Funding Banner */}
                 <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <p className="text-sm text-muted-foreground mb-1">Capital Ask</p>
-                    <p className="text-2xl font-bold text-primary tabular-nums">{business.fundingAsk}</p>
+                    <p className="text-sm text-muted-foreground mb-1">
+                      Capital Ask
+                    </p>
+                    <p className="text-2xl font-bold text-primary tabular-nums">
+                      {business.fundingAsk}
+                    </p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right hidden sm:block">
-                      <p className="text-sm text-muted-foreground mb-1">Progress</p>
-                      <p className="text-lg font-semibold text-foreground tabular-nums">{business.fundingProgress}%</p>
+                      <p className="text-sm text-muted-foreground mb-1">
+                        Progress
+                      </p>
+                      <p className="text-lg font-semibold text-foreground tabular-nums">
+                        {business.fundingProgress}%
+                      </p>
                     </div>
-                    <Button className="sm:w-auto w-full" onClick={() => setIsInterestModalOpen(true)}>
+                    <Button
+                      className="sm:w-auto w-full"
+                      onClick={() => setIsInterestModalOpen(true)}
+                    >
                       Express Interest
                     </Button>
                   </div>
@@ -244,173 +321,243 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
 
               {/* Tab Content */}
               <AnimatePresence mode="wait">
-              {activeTab === "Overview" && (
-                <motion.div
-                  key="overview"
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.24 }}
-                  className="space-y-8"
-                >
-                  <div>
-                    <h2 className="text-xl font-semibold text-foreground mb-4">Business Summary</h2>
-                    <p className="text-muted-foreground leading-relaxed">{business.description}</p>
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div className="gradient-card rounded-xl border border-border p-6">
-                      <h3 className="text-lg font-semibold text-foreground mb-3">The Problem</h3>
-                      <p className="text-muted-foreground text-sm leading-relaxed">{business.problem}</p>
+                {activeTab === "Overview" && (
+                  <motion.div
+                    key="overview"
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.24 }}
+                    className="space-y-8"
+                  >
+                    <div>
+                      <h2 className="text-xl font-semibold text-foreground mb-4">
+                        Business Summary
+                      </h2>
+                      <p className="text-muted-foreground leading-relaxed">
+                        {business.description}
+                      </p>
                     </div>
-                    <div className="gradient-card rounded-xl border border-border p-6">
-                      <h3 className="text-lg font-semibold text-foreground mb-3">Our Solution</h3>
-                      <p className="text-muted-foreground text-sm leading-relaxed">{business.solution}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
 
-              {activeTab === "Team" && (
-                <motion.div
-                  key="team"
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.24 }}
-                >
-                  <h2 className="text-xl font-semibold text-foreground mb-6">Leadership Team</h2>
-                  <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-                    {business.team.map((member) => (
-                      <div key={member.name} className="gradient-card rounded-xl border border-border p-5 text-center">
-                        <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center text-2xl font-bold text-foreground">
-                          {member.name.charAt(0)}
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="gradient-card rounded-xl border border-border p-6">
+                        <h3 className="text-lg font-semibold text-foreground mb-3">
+                          The Problem
+                        </h3>
+                        <p className="text-muted-foreground text-sm leading-relaxed">
+                          {business.problem}
+                        </p>
+                      </div>
+                      <div className="gradient-card rounded-xl border border-border p-6">
+                        <h3 className="text-lg font-semibold text-foreground mb-3">
+                          Our Solution
+                        </h3>
+                        <p className="text-muted-foreground text-sm leading-relaxed">
+                          {business.solution}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {activeTab === "Team" && (
+                  <motion.div
+                    key="team"
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.24 }}
+                  >
+                    <h2 className="text-xl font-semibold text-foreground mb-6">
+                      Leadership Team
+                    </h2>
+                    <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+                      {business.team.map((member) => (
+                        <div
+                          key={member.name}
+                          className="gradient-card rounded-xl border border-border p-5 text-center"
+                        >
+                          <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center text-2xl font-bold text-foreground">
+                            {member.name.charAt(0)}
+                          </div>
+                          <h3 className="font-semibold text-foreground mb-1">
+                            {member.name}
+                          </h3>
+                          <p className="text-sm text-muted-foreground mb-3">
+                            {member.role}
+                          </p>
+                          {member.linkedin && (
+                            <a
+                              href={member.linkedin}
+                              className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+                              aria-label={`${member.name} LinkedIn`}
+                            >
+                              <Linkedin className="w-4 h-4" />
+                            </a>
+                          )}
                         </div>
-                        <h3 className="font-semibold text-foreground mb-1">{member.name}</h3>
-                        <p className="text-sm text-muted-foreground mb-3">{member.role}</p>
-                        {member.linkedin && (
-                          <a 
-                            href={member.linkedin}
-                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-secondary text-muted-foreground hover:text-foreground transition-colors"
-                            aria-label={`${member.name} LinkedIn`}
-                          >
-                            <Linkedin className="w-4 h-4" />
-                          </a>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
 
-              {activeTab === "Metrics" && (
-                <motion.div
-                  key="metrics"
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.24 }}
-                  className="space-y-8"
-                >
-                  {/* Key Metrics */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {[
-                      { label: "ARR", value: business.metrics.revenue, icon: TrendingUp },
-                      { label: "Customers", value: business.metrics.users, icon: Users },
-                      { label: "Runway", value: business.metrics.runway, icon: Calendar },
-                      { label: "MRR", value: business.metrics.mrr, icon: Building2 },
-                    ].map((metric) => (
-                      <div key={metric.label} className="gradient-card rounded-xl border border-border p-4">
-                        <metric.icon className="w-5 h-5 text-primary mb-2" />
-                        <p className="text-lg font-bold text-foreground tabular-nums">{metric.value}</p>
-                        <p className="text-xs text-muted-foreground">{metric.label}</p>
-                      </div>
-                    ))}
-                  </div>
+                {activeTab === "Metrics" && (
+                  <motion.div
+                    key="metrics"
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.24 }}
+                    className="space-y-8"
+                  >
+                    {/* Key Metrics */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {[
+                        {
+                          label: "ARR",
+                          value: business.metrics.revenue,
+                          icon: TrendingUp,
+                        },
+                        {
+                          label: "Customers",
+                          value: business.metrics.users,
+                          icon: Users,
+                        },
+                        {
+                          label: "Runway",
+                          value: business.metrics.runway,
+                          icon: Calendar,
+                        },
+                        {
+                          label: "MRR",
+                          value: business.metrics.mrr,
+                          icon: Building2,
+                        },
+                      ].map((metric) => (
+                        <div
+                          key={metric.label}
+                          className="gradient-card rounded-xl border border-border p-4"
+                        >
+                          <metric.icon className="w-5 h-5 text-primary mb-2" />
+                          <p className="text-lg font-bold text-foreground tabular-nums">
+                            {metric.value}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {metric.label}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
 
-                  {/* Valuation Chart */}
-                  <div className="gradient-card rounded-xl border border-border p-6">
-                    <div className="flex items-center justify-between mb-6">
-                      <h3 className="text-lg font-semibold text-foreground">Valuation Trend</h3>
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="text-muted-foreground">Growth</span>
-                        <span className="text-[#10B981] font-semibold flex items-center gap-0.5">
-                          +{business.growth}%
-                          <ArrowUpRight className="w-3.5 h-3.5" />
-                        </span>
+                    {/* Valuation Chart */}
+                    <div className="gradient-card rounded-xl border border-border p-6">
+                      <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-lg font-semibold text-foreground">
+                          Valuation Trend
+                        </h3>
+                        <div className="flex items-center gap-2 text-sm">
+                          <span className="text-muted-foreground">Growth</span>
+                          <span className="text-[#10B981] font-semibold flex items-center gap-0.5">
+                            +{business.growth}%
+                            <ArrowUpRight className="w-3.5 h-3.5" />
+                          </span>
+                        </div>
+                      </div>
+                      <div className="h-[280px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <AreaChart data={business.valuationHistory}>
+                            <defs>
+                              <linearGradient
+                                id="colorValue"
+                                x1="0"
+                                y1="0"
+                                x2="0"
+                                y2="1"
+                              >
+                                <stop
+                                  offset="5%"
+                                  stopColor="#3B82F6"
+                                  stopOpacity={0.3}
+                                />
+                                <stop
+                                  offset="95%"
+                                  stopColor="#3B82F6"
+                                  stopOpacity={0}
+                                />
+                              </linearGradient>
+                            </defs>
+                            <CartesianGrid
+                              strokeDasharray="3 3"
+                              stroke="#1E2D45"
+                              vertical={false}
+                            />
+                            <XAxis
+                              dataKey="date"
+                              stroke="#475569"
+                              tick={{ fill: "#94A3B8", fontSize: 12 }}
+                              tickLine={false}
+                              axisLine={{ stroke: "#1E2D45" }}
+                            />
+                            <YAxis
+                              stroke="#475569"
+                              tick={{ fill: "#94A3B8", fontSize: 12 }}
+                              tickLine={false}
+                              axisLine={false}
+                              tickFormatter={(value) => `₹${value}Cr`}
+                            />
+                            <Tooltip
+                              contentStyle={{
+                                backgroundColor: "#1A2235",
+                                border: "1px solid #1E2D45",
+                                borderRadius: "10px",
+                                color: "#F1F5F9",
+                              }}
+                              formatter={(value: number) => [
+                                `₹${value}Cr`,
+                                "Valuation",
+                              ]}
+                            />
+                            <Area
+                              type="monotone"
+                              dataKey="value"
+                              stroke="#3B82F6"
+                              strokeWidth={2}
+                              fillOpacity={1}
+                              fill="url(#colorValue)"
+                            />
+                          </AreaChart>
+                        </ResponsiveContainer>
                       </div>
                     </div>
-                    <div className="h-[280px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={business.valuationHistory}>
-                          <defs>
-                            <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3} />
-                              <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
-                            </linearGradient>
-                          </defs>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#1E2D45" vertical={false} />
-                          <XAxis 
-                            dataKey="date" 
-                            stroke="#475569" 
-                            tick={{ fill: '#94A3B8', fontSize: 12 }}
-                            tickLine={false}
-                            axisLine={{ stroke: '#1E2D45' }}
-                          />
-                          <YAxis 
-                            stroke="#475569"
-                            tick={{ fill: '#94A3B8', fontSize: 12 }}
-                            tickLine={false}
-                            axisLine={false}
-                            tickFormatter={(value) => `₹${value}Cr`}
-                          />
-                          <Tooltip
-                            contentStyle={{
-                              backgroundColor: '#1A2235',
-                              border: '1px solid #1E2D45',
-                              borderRadius: '10px',
-                              color: '#F1F5F9',
-                            }}
-                            formatter={(value: number) => [`₹${value}Cr`, 'Valuation']}
-                          />
-                          <Area
-                            type="monotone"
-                            dataKey="value"
-                            stroke="#3B82F6"
-                            strokeWidth={2}
-                            fillOpacity={1}
-                            fill="url(#colorValue)"
-                          />
-                        </AreaChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
+                  </motion.div>
+                )}
 
-              {activeTab === "Pitch Deck" && (
-                <motion.div
-                  key="pitch"
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.24 }}
-                >
-                  <div className="gradient-card rounded-xl border border-border p-8 text-center">
-                    <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
-                      <Lock className="w-8 h-8 text-muted-foreground" />
+                {activeTab === "Pitch Deck" && (
+                  <motion.div
+                    key="pitch"
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.24 }}
+                  >
+                    <div className="gradient-card rounded-xl border border-border p-8 text-center">
+                      <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
+                        <Lock className="w-8 h-8 text-muted-foreground" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-foreground mb-2">
+                        Deal Materials Require Access
+                      </h3>
+                      <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                        Express your interest to request access to the full
+                        investment deck and detailed financials.
+                      </p>
+                      <Button onClick={() => setIsInterestModalOpen(true)}>
+                        <FileText className="w-4 h-4 mr-2" />
+                        Request Access
+                      </Button>
                     </div>
-                    <h3 className="text-lg font-semibold text-foreground mb-2">Deal Materials Require Access</h3>
-                    <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                      Express your interest to request access to the full investment deck and detailed financials.
-                    </p>
-                    <Button onClick={() => setIsInterestModalOpen(true)}>
-                      <FileText className="w-4 h-4 mr-2" />
-                      Request Access
-                    </Button>
-                  </div>
-                </motion.div>
-              )}
+                  </motion.div>
+                )}
               </AnimatePresence>
             </div>
 
@@ -418,20 +565,38 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
             <div className="space-y-6">
               {/* Quick Facts */}
               <div className="gradient-card rounded-xl border border-border p-5 sticky top-24">
-                <h3 className="font-semibold text-foreground mb-4">Quick Facts</h3>
+                <h3 className="font-semibold text-foreground mb-4">
+                  Quick Facts
+                </h3>
                 <div className="space-y-4">
                   {[
-                    { icon: Calendar, label: "Founded", value: business.founded },
+                    {
+                      icon: Calendar,
+                      label: "Founded",
+                      value: business.founded,
+                    },
                     { icon: MapPin, label: "Headquarters", value: business.hq },
                     { icon: Building2, label: "Stage", value: business.stage },
-                    { icon: FileText, label: "Business Group", value: business.sector },
-                    { icon: Users, label: "Team Size", value: `${business.teamSize} people` },
+                    {
+                      icon: FileText,
+                      label: "Business Group",
+                      value: business.sector,
+                    },
+                    {
+                      icon: Users,
+                      label: "Team Size",
+                      value: `${business.teamSize} people`,
+                    },
                   ].map((item) => (
                     <div key={item.label} className="flex items-center gap-3">
                       <item.icon className="w-4 h-4 text-muted-foreground" />
                       <div className="flex-1">
-                        <p className="text-xs text-muted-foreground">{item.label}</p>
-                        <p className="text-sm font-medium text-foreground">{item.value}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {item.label}
+                        </p>
+                        <p className="text-sm font-medium text-foreground">
+                          {item.value}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -448,8 +613,12 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
             <div className="w-full max-w-[calc(100vw-2rem)] sm:max-w-lg gradient-card rounded-2xl border border-border bg-card shadow-2xl">
               <div className="flex items-center justify-between border-b border-border p-6">
                 <div>
-                  <h2 className="text-xl font-bold text-foreground">Express Interest</h2>
-                  <p className="text-sm text-muted-foreground mt-1">Send your interest directly to the admin review queue</p>
+                  <h2 className="text-xl font-bold text-foreground">
+                    Express Interest
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Send your interest directly to the admin review queue
+                  </p>
                 </div>
                 <button
                   onClick={() => {
@@ -471,8 +640,13 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
                   <div className="w-16 h-16 rounded-full bg-[#10B981]/10 flex items-center justify-center mx-auto mb-5">
                     <CheckCircle2 className="w-8 h-8 text-[#10B981]" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-2">Interest Submitted</h3>
-                  <p className="text-muted-foreground mb-6">The admin team can now review your message from the request page.</p>
+                  <h3 className="text-xl font-bold text-foreground mb-2">
+                    Interest Submitted
+                  </h3>
+                  <p className="text-muted-foreground mb-6">
+                    The admin team can now review your message from the request
+                    page.
+                  </p>
                   <Button
                     onClick={() => {
                       setIsInterestModalOpen(false)
@@ -489,7 +663,9 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
                     type="text"
                     placeholder="Your name"
                     value={interestForm.name}
-                    onChange={(e) => setInterestForm({ ...interestForm, name: e.target.value })}
+                    onChange={(e) =>
+                      setInterestForm({ ...interestForm, name: e.target.value })
+                    }
                     required
                     className="h-11 bg-secondary/50 border-border"
                   />
@@ -497,14 +673,24 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
                     type="email"
                     placeholder="Your email"
                     value={interestForm.email}
-                    onChange={(e) => setInterestForm({ ...interestForm, email: e.target.value })}
+                    onChange={(e) =>
+                      setInterestForm({
+                        ...interestForm,
+                        email: e.target.value,
+                      })
+                    }
                     required
                     className="h-11 bg-secondary/50 border-border"
                   />
                   <textarea
                     placeholder="Message (optional)"
                     value={interestForm.message}
-                    onChange={(e) => setInterestForm({ ...interestForm, message: e.target.value })}
+                    onChange={(e) =>
+                      setInterestForm({
+                        ...interestForm,
+                        message: e.target.value,
+                      })
+                    }
                     rows={4}
                     className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-border text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
                   />
@@ -512,7 +698,13 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
                   {submitInterest.isError && (
                     <div className="flex items-center gap-2 text-sm text-[#EF4444] bg-[#EF4444]/10 p-3 rounded-lg border border-[#EF4444]/20">
                       <AlertCircle className="w-4 h-4 shrink-0" />
-                      <p>{getUserFacingErrorMessage(submitInterest.error, "mutation", "We couldn't submit your interest right now.")}</p>
+                      <p>
+                        {getUserFacingErrorMessage(
+                          submitInterest.error,
+                          "mutation",
+                          "We couldn't submit your interest right now."
+                        )}
+                      </p>
                     </div>
                   )}
 
@@ -529,8 +721,14 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
                     >
                       Cancel
                     </Button>
-                    <Button type="submit" className="w-full sm:flex-1" disabled={submitInterest.isPending}>
-                      {submitInterest.isPending ? "Submitting..." : "Submit Interest"}
+                    <Button
+                      type="submit"
+                      className="w-full sm:flex-1"
+                      disabled={submitInterest.isPending}
+                    >
+                      {submitInterest.isPending
+                        ? "Submitting..."
+                        : "Submit Interest"}
                     </Button>
                   </div>
                 </form>

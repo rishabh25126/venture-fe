@@ -69,9 +69,12 @@ export const businesses: Business[] = [
     founded: "2021",
     hq: "Mumbai, India",
     teamSize: 38,
-    description: "Saffron Sips builds premium Indian beverage brands for modern trade, quick commerce, and corporate pantry programs.",
-    problem: "Most heritage-inspired beverage brands struggle to scale beyond boutique distribution while maintaining quality and shelf consistency.",
-    solution: "Saffron Sips combines central production, strong retail distribution, and data-led merchandising to scale repeatable beverage SKUs nationwide.",
+    description:
+      "Saffron Sips builds premium Indian beverage brands for modern trade, quick commerce, and corporate pantry programs.",
+    problem:
+      "Most heritage-inspired beverage brands struggle to scale beyond boutique distribution while maintaining quality and shelf consistency.",
+    solution:
+      "Saffron Sips combines central production, strong retail distribution, and data-led merchandising to scale repeatable beverage SKUs nationwide.",
     team: [
       { name: "Aarav Bedi", role: "CEO & Co-founder", linkedin: "#" },
       { name: "Nisha Kapoor", role: "COO & Co-founder", linkedin: "#" },
@@ -94,7 +97,8 @@ export const businesses: Business[] = [
   {
     id: "crumb-co",
     name: "Crumb & Co",
-    tagline: "Fast-growing artisanal bakery chain with cloud-kitchen efficiency",
+    tagline:
+      "Fast-growing artisanal bakery chain with cloud-kitchen efficiency",
     logo: "🥐",
     sector: "Food & Beverages",
     stage: "Seed",
@@ -106,9 +110,12 @@ export const businesses: Business[] = [
     founded: "2023",
     hq: "Bengaluru, India",
     teamSize: 19,
-    description: "Crumb & Co operates neighborhood bakery cafes with centralized prep and strong delivery economics.",
-    problem: "Independent bakeries face margin pressure from fragmented sourcing, uneven demand, and poor fulfillment systems.",
-    solution: "Crumb & Co standardizes production, reduces wastage, and improves repeat demand through memberships, catering, and omnichannel delivery.",
+    description:
+      "Crumb & Co operates neighborhood bakery cafes with centralized prep and strong delivery economics.",
+    problem:
+      "Independent bakeries face margin pressure from fragmented sourcing, uneven demand, and poor fulfillment systems.",
+    solution:
+      "Crumb & Co standardizes production, reduces wastage, and improves repeat demand through memberships, catering, and omnichannel delivery.",
     team: [
       { name: "Mihika Rao", role: "Founder & CEO", linkedin: "#" },
       { name: "Kabir Sethi", role: "Operations Lead", linkedin: "#" },
@@ -141,9 +148,12 @@ export const businesses: Business[] = [
     founded: "2022",
     hq: "Jaipur, India",
     teamSize: 44,
-    description: "Threadline House designs premium ethnicwear collections sold through D2C, marketplaces, and select experience stores.",
-    problem: "Fashion brands often lose margin and demand visibility due to poor inventory planning and disconnected sales channels.",
-    solution: "Threadline House runs small-batch drops, fast replenishment loops, and channel-aware merchandising to improve sell-through and cash cycles.",
+    description:
+      "Threadline House designs premium ethnicwear collections sold through D2C, marketplaces, and select experience stores.",
+    problem:
+      "Fashion brands often lose margin and demand visibility due to poor inventory planning and disconnected sales channels.",
+    solution:
+      "Threadline House runs small-batch drops, fast replenishment loops, and channel-aware merchandising to improve sell-through and cash cycles.",
     team: [
       { name: "Sara Malhotra", role: "CEO & Creative Director", linkedin: "#" },
       { name: "Dev Oberoi", role: "COO", linkedin: "#" },
@@ -166,7 +176,8 @@ export const businesses: Business[] = [
   {
     id: "aisleone",
     name: "AisleOne",
-    tagline: "Specialty retail chain for home, gifting, and seasonal merchandise",
+    tagline:
+      "Specialty retail chain for home, gifting, and seasonal merchandise",
     logo: "🛍️",
     sector: "Fashion & Retail",
     stage: "Seed",
@@ -178,9 +189,12 @@ export const businesses: Business[] = [
     founded: "2023",
     hq: "Delhi NCR, India",
     teamSize: 24,
-    description: "AisleOne operates compact high-turn retail stores blending home accents, festive gifting, and private-label accessories.",
-    problem: "Offline specialty retail lacks reliable merchandising data, causing overstocks, markdowns, and low conversion from walk-ins.",
-    solution: "AisleOne uses centralized assortment planning, private-label margins, and store-level analytics to improve inventory turns and conversion.",
+    description:
+      "AisleOne operates compact high-turn retail stores blending home accents, festive gifting, and private-label accessories.",
+    problem:
+      "Offline specialty retail lacks reliable merchandising data, causing overstocks, markdowns, and low conversion from walk-ins.",
+    solution:
+      "AisleOne uses centralized assortment planning, private-label margins, and store-level analytics to improve inventory turns and conversion.",
     team: [
       { name: "Rohan Taneja", role: "Founder & CEO", linkedin: "#" },
       { name: "Megha Arora", role: "Merchandising Lead", linkedin: "#" },
@@ -213,9 +227,12 @@ export const businesses: Business[] = [
     founded: "2022",
     hq: "Hyderabad, India",
     teamSize: 31,
-    description: "Rinse Ritual runs branded laundromat stores with subscription plans, pick-up/drop, and machine utilization analytics.",
-    problem: "Traditional laundromats remain operationally fragmented, with weak customer retention and poor visibility into throughput and service quality.",
-    solution: "Rinse Ritual combines app-led convenience, standardized store operations, and subscription loyalty to create a scalable neighborhood services brand.",
+    description:
+      "Rinse Ritual runs branded laundromat stores with subscription plans, pick-up/drop, and machine utilization analytics.",
+    problem:
+      "Traditional laundromats remain operationally fragmented, with weak customer retention and poor visibility into throughput and service quality.",
+    solution:
+      "Rinse Ritual combines app-led convenience, standardized store operations, and subscription loyalty to create a scalable neighborhood services brand.",
     team: [
       { name: "Ishaan Verma", role: "CEO & Founder", linkedin: "#" },
       { name: "Pallavi Jain", role: "Head of Operations", linkedin: "#" },
@@ -237,7 +254,8 @@ export const businesses: Business[] = [
   {
     id: "spin-cycle-co",
     name: "Spin Cycle Co",
-    tagline: "Compact laundromat franchise model for apartment-first catchments",
+    tagline:
+      "Compact laundromat franchise model for apartment-first catchments",
     logo: "🧺",
     sector: "Laundromats",
     stage: "Pre-seed",
@@ -249,9 +267,12 @@ export const businesses: Business[] = [
     founded: "2024",
     hq: "Pune, India",
     teamSize: 11,
-    description: "Spin Cycle Co is building a franchise-ready laundromat format optimized for apartment clusters and gated communities.",
-    problem: "Community laundry services are inconsistent, under-branded, and operationally difficult to monitor across micro-locations.",
-    solution: "Spin Cycle Co offers compact store design, remote machine telemetry, and franchise dashboards that simplify rollout and service reliability.",
+    description:
+      "Spin Cycle Co is building a franchise-ready laundromat format optimized for apartment clusters and gated communities.",
+    problem:
+      "Community laundry services are inconsistent, under-branded, and operationally difficult to monitor across micro-locations.",
+    solution:
+      "Spin Cycle Co offers compact store design, remote machine telemetry, and franchise dashboards that simplify rollout and service reliability.",
     team: [
       { name: "Anmol Khanna", role: "Founder", linkedin: "#" },
       { name: "Vidhi Suri", role: "Franchise Ops", linkedin: "#" },
@@ -284,9 +305,12 @@ export const businesses: Business[] = [
     founded: "2021",
     hq: "Mumbai, India",
     teamSize: 63,
-    description: "TailTrail serves pet parents through subscriptions, clinic partnerships, grooming centers, and a high-repeat essentials catalog.",
-    problem: "Pet care spending is fragmented across grooming, nutrition, accessories, and care providers, limiting brand trust and recurring revenue.",
-    solution: "TailTrail integrates recurring commerce, wellness reminders, and offline care fulfillment into one consumer pet ecosystem.",
+    description:
+      "TailTrail serves pet parents through subscriptions, clinic partnerships, grooming centers, and a high-repeat essentials catalog.",
+    problem:
+      "Pet care spending is fragmented across grooming, nutrition, accessories, and care providers, limiting brand trust and recurring revenue.",
+    solution:
+      "TailTrail integrates recurring commerce, wellness reminders, and offline care fulfillment into one consumer pet ecosystem.",
     team: [
       { name: "Zoya Merchant", role: "CEO & Co-founder", linkedin: "#" },
       { name: "Harshad Vora", role: "COO & Co-founder", linkedin: "#" },
@@ -309,7 +333,8 @@ export const businesses: Business[] = [
   {
     id: "paws-and-play",
     name: "Paws & Play",
-    tagline: "Neighborhood pet retail and daycare brand with recurring memberships",
+    tagline:
+      "Neighborhood pet retail and daycare brand with recurring memberships",
     logo: "🐶",
     sector: "Pet Industry",
     stage: "Seed",
@@ -321,9 +346,12 @@ export const businesses: Business[] = [
     founded: "2023",
     hq: "Chennai, India",
     teamSize: 21,
-    description: "Paws & Play combines pet retail, daycare, grooming, and weekend community events in neighborhood-first formats.",
-    problem: "Pet parents often juggle multiple disconnected local providers for food, care, grooming, and boarding.",
-    solution: "Paws & Play creates a trusted local pet-services brand with repeat visits, memberships, and higher-margin ancillary services.",
+    description:
+      "Paws & Play combines pet retail, daycare, grooming, and weekend community events in neighborhood-first formats.",
+    problem:
+      "Pet parents often juggle multiple disconnected local providers for food, care, grooming, and boarding.",
+    solution:
+      "Paws & Play creates a trusted local pet-services brand with repeat visits, memberships, and higher-margin ancillary services.",
     team: [
       { name: "Ira Menon", role: "Founder & CEO", linkedin: "#" },
       { name: "Sarthak Nair", role: "Operations Head", linkedin: "#" },

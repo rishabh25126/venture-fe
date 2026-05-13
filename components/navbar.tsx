@@ -2,12 +2,24 @@
 
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import { TrendingUp, Sun, Moon, Menu, X, ChevronDown, LogOut } from "lucide-react"
+import {
+  TrendingUp,
+  Sun,
+  Moon,
+  Menu,
+  X,
+  ChevronDown,
+  LogOut,
+} from "lucide-react"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks"
-import { getDashboardHref, getFirstName, getInitials } from "@/lib/auth/route-access"
+import {
+  getDashboardHref,
+  getFirstName,
+  getInitials,
+} from "@/lib/auth/route-access"
 import api, { setApiToken } from "@/lib/api"
 import { logout } from "@/lib/features/auth/authSlice"
 
@@ -59,8 +71,8 @@ export function Navbar() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 h-16 transition-all duration-300",
         "backdrop-blur-xl border-b",
-        isScrolled 
-          ? "bg-background/80 border-border shadow-lg shadow-black/5" 
+        isScrolled
+          ? "bg-background/80 border-border shadow-lg shadow-black/5"
           : "bg-transparent border-transparent"
       )}
     >
@@ -70,25 +82,27 @@ export function Navbar() {
           <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
             <TrendingUp className="w-5 h-5 text-primary-foreground" />
           </div>
-          <span className="text-lg font-semibold text-foreground">Irresistible</span>
+          <span className="text-lg font-semibold text-foreground">
+            Irresistible
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8">
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
             Home
           </Link>
-          <Link 
+          <Link
             href="/businesses"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
             Businesses
           </Link>
-          <Link 
-            href="#about" 
+          <Link
+            href="#about"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
             About
@@ -113,7 +127,10 @@ export function Navbar() {
           </button>
 
           {isLoading ? (
-            <div className="hidden h-10 w-36 rounded-lg border border-border md:block" aria-hidden="true" />
+            <div
+              className="hidden h-10 w-36 rounded-lg border border-border md:block"
+              aria-hidden="true"
+            />
           ) : user ? (
             <>
               <Button
@@ -132,14 +149,20 @@ export function Navbar() {
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
                     {initials}
                   </div>
-                  <span className="text-sm font-medium text-foreground">{firstName}</span>
+                  <span className="text-sm font-medium text-foreground">
+                    {firstName}
+                  </span>
                   <ChevronDown className="h-4 w-4 text-muted-foreground" />
                 </button>
                 {isUserMenuOpen && (
                   <div className="absolute right-0 mt-2 w-56 rounded-xl border border-border bg-card p-2 shadow-lg">
                     <div className="px-3 py-2">
-                      <p className="text-sm font-medium text-foreground">{user.name}</p>
-                      <p className="text-xs text-muted-foreground">{user.email}</p>
+                      <p className="text-sm font-medium text-foreground">
+                        {user.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {user.email}
+                      </p>
                     </div>
                     <div className="my-1 h-px bg-border" />
                     <Link
@@ -189,22 +212,22 @@ export function Navbar() {
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-16 left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-border">
           <div className="px-4 py-4 flex flex-col gap-2">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-secondary transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Home
             </Link>
-            <Link 
+            <Link
               href="/businesses"
               className="px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-secondary transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Businesses
             </Link>
-            <Link 
-              href="#about" 
+            <Link
+              href="#about"
               className="px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-secondary transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >
@@ -232,10 +255,7 @@ export function Navbar() {
                   </Button>
                 </>
               ) : (
-                <Button
-                  className="w-full"
-                  asChild
-                >
+                <Button className="w-full" asChild>
                   <Link href="/login">Investor Login</Link>
                 </Button>
               )}

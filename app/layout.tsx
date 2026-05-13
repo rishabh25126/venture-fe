@@ -1,46 +1,47 @@
-import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
-import StoreProvider from './StoreProvider'
-import ReactQueryProvider from './ReactQueryProvider'
-import AuthBootstrap from './AuthBootstrap'
-import { ThemeProvider } from '@/components/theme-provider'
-import { RouteAccessBoundary } from '@/components/route-access-boundary'
-import { GlobalLoader } from '@/components/app-loader'
-import { Toaster } from '@/components/ui/sonner'
-import './globals.css'
+import type { Metadata, Viewport } from "next"
+import { Inter } from "next/font/google"
+import { Analytics } from "@vercel/analytics/next"
+import StoreProvider from "./StoreProvider"
+import ReactQueryProvider from "./ReactQueryProvider"
+import AuthBootstrap from "./AuthBootstrap"
+import { ThemeProvider } from "@/components/theme-provider"
+import { RouteAccessBoundary } from "@/components/route-access-boundary"
+import { GlobalLoader } from "@/components/app-loader"
+import { Toaster } from "@/components/ui/sonner"
+import "./globals.css"
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ["latin"],
-  variable: '--font-inter',
+  variable: "--font-inter",
 })
 
 export const metadata: Metadata = {
-  title: 'Irresistible | Where Businesses Meet Capital',
-  description: 'A premium platform connecting investment-ready businesses with investors. Discover opportunities, track portfolios, and manage deal flow.',
-  generator: 'v0.app',
+  title: "Irresistible | Where Businesses Meet Capital",
+  description:
+    "A premium platform connecting investment-ready businesses with investors. Discover opportunities, track portfolios, and manage deal flow.",
+  generator: "v0.app",
   icons: {
     icon: [
       {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
+        url: "/icon-light-32x32.png",
+        media: "(prefers-color-scheme: light)",
       },
       {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
+        url: "/icon-dark-32x32.png",
+        media: "(prefers-color-scheme: dark)",
       },
       {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
+        url: "/icon.svg",
+        type: "image/svg+xml",
       },
     ],
-    apple: '/apple-icon.png',
+    apple: "/apple-icon.png",
   },
 }
 
 export const viewport: Viewport = {
-  themeColor: '#0A0F1E',
-  width: 'device-width',
+  themeColor: "#0A0F1E",
+  width: "device-width",
   initialScale: 1,
 }
 
@@ -68,7 +69,7 @@ export default function RootLayout({
             </ThemeProvider>
           </StoreProvider>
         </ReactQueryProvider>
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>
   )

@@ -15,32 +15,36 @@ interface AssignEquityDialogProps {
   preselectedInvestorId?: string
 }
 
-export function AssignEquityDialog({ isOpen, onClose, preselectedInvestorId }: AssignEquityDialogProps) {
+export function AssignEquityDialog({
+  isOpen,
+  onClose,
+  preselectedInvestorId,
+}: AssignEquityDialogProps) {
   const queryClient = useQueryClient()
   const [formData, setFormData] = useState({
     investorId: preselectedInvestorId || "",
     businessId: "",
     investedAmount: "",
     shares: "",
-    equityPercentage: ""
+    equityPercentage: "",
   })
 
   const { data: businesses = [] } = useQuery({
-    queryKey: ['admin-businesses'],
+    queryKey: ["admin-businesses"],
     queryFn: async () => {
-      const res = await api.get('/businesses/manage/list?limit=100')
+      const res = await api.get("/businesses/manage/list?limit=100")
       return res.data.data.businesses
     },
-    enabled: isOpen
+    enabled: isOpen,
   })
 
   const { data: investors = [] } = useQuery({
-    queryKey: ['admin-investors'],
+    queryKey: ["admin-investors"],
     queryFn: async () => {
-      const res = await api.get('/admin/users?role=investor')
+      const res = await api.get("/admin/users?role=investor")
       return res.data.data.investors
     },
-    enabled: isOpen
+    enabled: isOpen,
   })
 
   const assignEquity = useMutation({
@@ -52,13 +56,13 @@ export function AssignEquityDialog({ isOpen, onClose, preselectedInvestorId }: A
         shares: Number(data.shares) || 0,
         equityPercentage: Number(data.equityPercentage) || 0,
       }
-      const res = await api.post('/access/assign', payload)
+      const res = await api.post("/access/assign", payload)
       return res.data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-investors'] })
+      queryClient.invalidateQueries({ queryKey: ["admin-investors"] })
       handleClose()
-    }
+    },
   })
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -74,7 +78,7 @@ export function AssignEquityDialog({ isOpen, onClose, preselectedInvestorId }: A
         businessId: "",
         investedAmount: "",
         shares: "",
-        equityPercentage: ""
+        equityPercentage: "",
       })
       assignEquity.reset()
     }, 300)
@@ -100,8 +104,12 @@ export function AssignEquityDialog({ isOpen, onClose, preselectedInvestorId }: A
             <div className="gradient-card overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
               <div className="flex items-center justify-between border-b border-border p-6">
                 <div>
-                  <h2 className="text-xl font-bold text-foreground">Assign Equity</h2>
-                  <p className="text-sm text-muted-foreground mt-1">Grant an investor access and equity in a business</p>
+                  <h2 className="text-xl font-bold text-foreground">
+                    Assign Equity
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Grant an investor access and equity in a business
+                  </p>
                 </div>
                 <button
                   onClick={handleClose}
@@ -114,11 +122,15 @@ export function AssignEquityDialog({ isOpen, onClose, preselectedInvestorId }: A
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">Investor *</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Investor *
+                    </label>
                     <select
                       required
                       value={formData.investorId}
-                      onChange={(e) => setFormData({ ...formData, investorId: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, investorId: e.target.value })
+                      }
                       className="w-full h-11 px-3 rounded-lg bg-secondary/50 border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                     >
                       <option value="">Select investor...</option>
@@ -131,11 +143,15 @@ export function AssignEquityDialog({ isOpen, onClose, preselectedInvestorId }: A
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">Business *</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Business *
+                    </label>
                     <select
                       required
                       value={formData.businessId}
-                      onChange={(e) => setFormData({ ...formData, businessId: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, businessId: e.target.value })
+                      }
                       className="w-full h-11 px-3 rounded-lg bg-secondary/50 border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                     >
                       <option value="">Select business...</option>
@@ -150,35 +166,53 @@ export function AssignEquityDialog({ isOpen, onClose, preselectedInvestorId }: A
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">Invested (₹) *</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Invested (₹) *
+                    </label>
                     <Input
                       type="number"
                       min="1"
                       required
                       placeholder="e.g. 1000000"
                       value={formData.investedAmount}
-                      onChange={(e) => setFormData({ ...formData, investedAmount: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          investedAmount: e.target.value,
+                        })
+                      }
                       className="bg-secondary/50"
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">Shares</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Shares
+                    </label>
                     <Input
                       type="number"
                       placeholder="e.g. 10000"
                       value={formData.shares}
-                      onChange={(e) => setFormData({ ...formData, shares: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, shares: e.target.value })
+                      }
                       className="bg-secondary/50"
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">Equity %</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Equity %
+                    </label>
                     <Input
                       type="number"
                       step="0.01"
                       placeholder="e.g. 5.5"
                       value={formData.equityPercentage}
-                      onChange={(e) => setFormData({ ...formData, equityPercentage: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          equityPercentage: e.target.value,
+                        })
+                      }
                       className="bg-secondary/50"
                     />
                   </div>
@@ -187,18 +221,34 @@ export function AssignEquityDialog({ isOpen, onClose, preselectedInvestorId }: A
                 {assignEquity.isError && (
                   <div className="flex items-center gap-2 text-sm text-[#EF4444] bg-[#EF4444]/10 p-3 rounded-lg border border-[#EF4444]/20 mt-4">
                     <AlertCircle className="w-4 h-4 shrink-0" />
-                    <p>{getUserFacingErrorMessage(assignEquity.error, "mutation", "We couldn't assign equity right now.")}</p>
+                    <p>
+                      {getUserFacingErrorMessage(
+                        assignEquity.error,
+                        "mutation",
+                        "We couldn't assign equity right now."
+                      )}
+                    </p>
                   </div>
                 )}
 
                 <div className="pt-4 flex flex-col-reverse gap-3 sm:flex-row">
-                  <Button type="button" variant="outline" onClick={handleClose} className="w-full sm:flex-1">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleClose}
+                    className="w-full sm:flex-1"
+                  >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
                     className="w-full sm:flex-1"
-                    disabled={assignEquity.isPending || !formData.investorId || !formData.businessId || Number(formData.investedAmount) <= 0}
+                    disabled={
+                      assignEquity.isPending ||
+                      !formData.investorId ||
+                      !formData.businessId ||
+                      Number(formData.investedAmount) <= 0
+                    }
                   >
                     {assignEquity.isPending ? "Assigning..." : "Assign Equity"}
                   </Button>
