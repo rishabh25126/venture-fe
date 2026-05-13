@@ -18,17 +18,17 @@ export function AssignEquityDialog({ isOpen, onClose, preselectedInvestorId }: A
   const queryClient = useQueryClient()
   const [formData, setFormData] = useState({
     investorId: preselectedInvestorId || "",
-    startupId: "",
+    businessId: "",
     investedAmount: "",
     shares: "",
     equityPercentage: ""
   })
 
-  const { data: startups = [] } = useQuery({
-    queryKey: ['admin-startups'],
+  const { data: businesses = [] } = useQuery({
+    queryKey: ['admin-businesses'],
     queryFn: async () => {
-      const res = await api.get('/startups?limit=100')
-      return res.data.data.startups
+      const res = await api.get('/businesses/manage/list?limit=100')
+      return res.data.data.businesses
     },
     enabled: isOpen
   })
@@ -36,7 +36,7 @@ export function AssignEquityDialog({ isOpen, onClose, preselectedInvestorId }: A
   const { data: investors = [] } = useQuery({
     queryKey: ['admin-investors'],
     queryFn: async () => {
-      const res = await api.get('/admin/users')
+      const res = await api.get('/admin/users?role=investor')
       return res.data.data.investors
     },
     enabled: isOpen
@@ -46,7 +46,7 @@ export function AssignEquityDialog({ isOpen, onClose, preselectedInvestorId }: A
     mutationFn: async (data: typeof formData) => {
       const payload = {
         investorId: data.investorId,
-        startupId: data.startupId,
+        businessId: data.businessId,
         investedAmount: Number(data.investedAmount) || 0,
         shares: Number(data.shares) || 0,
         equityPercentage: Number(data.equityPercentage) || 0,
@@ -70,7 +70,7 @@ export function AssignEquityDialog({ isOpen, onClose, preselectedInvestorId }: A
     setTimeout(() => {
       setFormData({
         investorId: preselectedInvestorId || "",
-        startupId: "",
+        businessId: "",
         investedAmount: "",
         shares: "",
         equityPercentage: ""
@@ -100,7 +100,7 @@ export function AssignEquityDialog({ isOpen, onClose, preselectedInvestorId }: A
               <div className="flex items-center justify-between border-b border-border p-6">
                 <div>
                   <h2 className="text-xl font-bold text-foreground">Assign Equity</h2>
-                  <p className="text-sm text-muted-foreground mt-1">Grant an investor access and equity in a startup</p>
+                  <p className="text-sm text-muted-foreground mt-1">Grant an investor access and equity in a business</p>
                 </div>
                 <button
                   onClick={handleClose}
@@ -130,15 +130,15 @@ export function AssignEquityDialog({ isOpen, onClose, preselectedInvestorId }: A
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">Startup *</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">Business *</label>
                     <select
                       required
-                      value={formData.startupId}
-                      onChange={(e) => setFormData({ ...formData, startupId: e.target.value })}
+                      value={formData.businessId}
+                      onChange={(e) => setFormData({ ...formData, businessId: e.target.value })}
                       className="w-full h-11 px-3 rounded-lg bg-secondary/50 border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                     >
-                      <option value="">Select startup...</option>
-                      {startups.map((s: any) => (
+                      <option value="">Select business...</option>
+                      {businesses.map((s: any) => (
                         <option key={s._id} value={s._id}>
                           {s.name}
                         </option>
@@ -149,9 +149,11 @@ export function AssignEquityDialog({ isOpen, onClose, preselectedInvestorId }: A
 
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">Invested (₹)</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">Invested (₹) *</label>
                     <Input
                       type="number"
+                      min="1"
+                      required
                       placeholder="e.g. 1000000"
                       value={formData.investedAmount}
                       onChange={(e) => setFormData({ ...formData, investedAmount: e.target.value })}
@@ -195,7 +197,7 @@ export function AssignEquityDialog({ isOpen, onClose, preselectedInvestorId }: A
                   <Button 
                     type="submit" 
                     className="w-full" 
-                    disabled={assignEquity.isPending || !formData.investorId || !formData.startupId}
+                    disabled={assignEquity.isPending || !formData.investorId || !formData.businessId || Number(formData.investedAmount) <= 0}
                   >
                     {assignEquity.isPending ? "Assigning..." : "Assign Equity"}
                   </Button>

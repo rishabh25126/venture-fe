@@ -5,7 +5,7 @@ import { ArrowUpRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
-interface StartupCardProps {
+interface BusinessCardProps {
   id: string
   name: string
   tagline: string
@@ -19,13 +19,10 @@ interface StartupCardProps {
 }
 
 const sectorColors: Record<string, { bg: string; text: string }> = {
-  Fintech: { bg: "bg-[#1E3A5F]", text: "text-[#60A5FA]" },
-  HealthTech: { bg: "bg-[#14432A]", text: "text-[#34D399]" },
-  EdTech: { bg: "bg-[#3D1F5C]", text: "text-[#A78BFA]" },
-  SaaS: { bg: "bg-[#3B2A00]", text: "text-[#FCD34D]" },
-  "E-commerce": { bg: "bg-[#3B0A0A]", text: "text-[#FCA5A5]" },
-  AI: { bg: "bg-[#1E3A5F]", text: "text-[#60A5FA]" },
-  CleanTech: { bg: "bg-[#14432A]", text: "text-[#34D399]" },
+  "Food & Beverages": { bg: "bg-[#3B2A00]", text: "text-[#FCD34D]" },
+  "Fashion & Retail": { bg: "bg-[#3D1F5C]", text: "text-[#C4B5FD]" },
+  Laundromats: { bg: "bg-[#1E3A5F]", text: "text-[#93C5FD]" },
+  "Pet Industry": { bg: "bg-[#14432A]", text: "text-[#6EE7B7]" },
 }
 
 const stageColors: Record<string, { bg: string; text: string }> = {
@@ -35,7 +32,7 @@ const stageColors: Record<string, { bg: string; text: string }> = {
   "Series B": { bg: "bg-[#14432A]", text: "text-[#34D399]" },
 }
 
-export function StartupCard({
+export function BusinessCard({
   id,
   name,
   tagline,
@@ -46,7 +43,7 @@ export function StartupCard({
   revenueRange,
   growth,
   fundingProgress,
-}: StartupCardProps) {
+}: BusinessCardProps) {
   const sectorStyle = sectorColors[sector] || { bg: "bg-secondary", text: "text-muted-foreground" }
   const stageStyle = stageColors[stage] || { bg: "bg-secondary", text: "text-muted-foreground" }
 
@@ -83,7 +80,7 @@ export function StartupCard({
       {/* Metrics */}
       <div className="grid grid-cols-3 gap-3 mb-4">
         <div>
-          <p className="text-xs text-muted-foreground mb-1">Funding Ask</p>
+          <p className="text-xs text-muted-foreground mb-1">Capital Ask</p>
           <p className="text-sm font-semibold tabular-nums text-foreground">{fundingAsk}</p>
         </div>
         <div>
@@ -115,7 +112,7 @@ export function StartupCard({
 
       {/* CTA */}
       <Button className="w-full" asChild>
-        <Link href={`/startups/${id}`}>
+        <Link href={`/businesses/${id}`}>
           Express Interest
         </Link>
       </Button>

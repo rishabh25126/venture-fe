@@ -32,7 +32,7 @@ export default function LoginPage() {
       setApiToken(accessToken)
       dispatch(setCredentials({ user, accessToken }))
       
-      if (user.role === 'admin') {
+      if (user.role === 'admin' || user.role === 'owner') {
         router.push("/admin")
       } else {
         router.push("/dashboard")
@@ -60,7 +60,7 @@ export default function LoginPage() {
             <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-semibold text-foreground">VentureFlow</span>
+            <span className="text-xl font-semibold text-foreground">Irresistible</span>
           </Link>
         </div>
 
@@ -76,7 +76,7 @@ export default function LoginPage() {
         <div className="relative">
           <div className="gradient-card rounded-xl border border-border p-6 max-w-sm">
             <p className="text-muted-foreground italic mb-4">
-              &ldquo;VentureFlow has transformed how I manage my startup investments. The data room access and real-time updates are invaluable.&rdquo;
+              &ldquo;Irresistible has transformed how I manage my business investments. The data room access and real-time updates are invaluable.&rdquo;
             </p>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-lg font-bold text-foreground">
@@ -100,13 +100,13 @@ export default function LoginPage() {
               <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
                 <TrendingUp className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-semibold text-foreground">VentureFlow</span>
+              <span className="text-xl font-semibold text-foreground">Irresistible</span>
             </Link>
           </div>
 
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-foreground mb-2">Investor Login</h2>
-            <p className="text-muted-foreground">Enter your credentials to access your portfolio</p>
+            <h2 className="text-2xl font-bold text-foreground mb-2">Account Login</h2>
+            <p className="text-muted-foreground">Enter your credentials to access your assigned businesses and portfolio</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">

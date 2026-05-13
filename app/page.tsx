@@ -3,11 +3,11 @@ import { ArrowRight, Search, TrendingUp, Users, Building2, LayoutGrid } from "lu
 import { Button } from "@/components/ui/button"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import { StartupCard } from "@/components/startup-card"
-import { startups, sectors, stats } from "@/lib/data"
+import { BusinessCard } from "@/components/business-card"
+import { businesses, featuredBusinessGroups, stats } from "@/lib/data"
 
 export default function HomePage() {
-  const featuredStartups = startups.filter((s) => s.featured).slice(0, 4)
+  const featuredBusinesses = businesses.filter((s) => s.featured).slice(0, 4)
 
   return (
     <main className="min-h-screen">
@@ -28,17 +28,17 @@ export default function HomePage() {
             {/* Left content */}
             <div className="text-center lg:text-left">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight text-balance mb-6">
-                Where Startups Meet{" "}
+                Where Businesses Meet{" "}
                 <span className="text-primary">Capital</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-8 text-pretty">
-                Discover high-growth startups, access detailed financials, and invest in tomorrow&apos;s market leaders. Your gateway to curated deal flow.
+                Discover compelling businesses, review curated operating data, and back ventures built for durable growth. Irresistible brings premium deal flow into one place.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Button size="lg" className="h-12 px-6" asChild>
-                  <Link href="/startups">
+                  <Link href="/businesses">
                     <Search className="w-4 h-4 mr-2" />
-                    Explore Startups
+                    Explore Businesses
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" className="h-12 px-6 border-primary text-primary hover:bg-primary hover:text-primary-foreground" asChild>
@@ -55,17 +55,17 @@ export default function HomePage() {
                 <div className="gradient-card rounded-xl border border-border p-5 shadow-2xl">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase bg-[#1E3A5F] text-[#60A5FA]">
-                      Fintech
+                      Food & Beverages
                     </span>
                     <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase bg-[#3D1F5C] text-[#A78BFA]">
                       Series A
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-lg">💳</div>
+                    <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-lg">🧋</div>
                     <div>
-                      <h3 className="font-semibold text-foreground">PayStack AI</h3>
-                      <p className="text-sm text-muted-foreground">AI payment reconciliation</p>
+                      <h3 className="font-semibold text-foreground">Saffron Sips</h3>
+                      <p className="text-sm text-muted-foreground">Premium ready-to-drink chai</p>
                     </div>
                   </div>
                   <div className="mt-4 flex items-center justify-between text-sm">
@@ -79,17 +79,17 @@ export default function HomePage() {
                 <div className="gradient-card rounded-xl border border-border p-5 shadow-2xl">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase bg-[#14432A] text-[#34D399]">
-                      HealthTech
+                      Fashion & Retail
                     </span>
                     <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase bg-[#1E3A5F] text-[#60A5FA]">
                       Seed
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-lg">🏥</div>
+                    <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-lg">👗</div>
                     <div>
-                      <h3 className="font-semibold text-foreground">MediSync</h3>
-                      <p className="text-sm text-muted-foreground">Unified health data</p>
+                      <h3 className="font-semibold text-foreground">Threadline House</h3>
+                      <p className="text-sm text-muted-foreground">Digitally native ethnicwear label</p>
                     </div>
                   </div>
                   <div className="mt-4 flex items-center justify-between text-sm">
@@ -103,17 +103,17 @@ export default function HomePage() {
                 <div className="gradient-card rounded-xl border border-border p-5 shadow-2xl">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase bg-[#3D1F5C] text-[#A78BFA]">
-                      EdTech
+                      Laundromats
                     </span>
                     <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase bg-secondary text-muted-foreground">
                       Pre-seed
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-lg">🎓</div>
+                    <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-lg">🫧</div>
                     <div>
-                      <h3 className="font-semibold text-foreground">LearnVerse</h3>
-                      <p className="text-sm text-muted-foreground">VR learning platform</p>
+                      <h3 className="font-semibold text-foreground">Rinse Ritual</h3>
+                      <p className="text-sm text-muted-foreground">Tech-enabled neighborhood laundromats</p>
                     </div>
                   </div>
                   <div className="mt-4 flex items-center justify-between text-sm">
@@ -142,8 +142,8 @@ export default function HomePage() {
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Building2 className="w-5 h-5 text-primary" />
               </div>
-              <p className="text-3xl md:text-4xl font-bold text-primary tabular-nums mb-1">{stats.startups}</p>
-              <p className="text-sm text-muted-foreground">Startups Listed</p>
+              <p className="text-3xl md:text-4xl font-bold text-primary tabular-nums mb-1">{stats.businesses}</p>
+              <p className="text-sm text-muted-foreground">Businesses Listed</p>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
@@ -156,23 +156,23 @@ export default function HomePage() {
               <div className="flex items-center justify-center gap-2 mb-2">
                 <LayoutGrid className="w-5 h-5 text-primary" />
               </div>
-              <p className="text-3xl md:text-4xl font-bold text-primary tabular-nums mb-1">{stats.sectors}</p>
-              <p className="text-sm text-muted-foreground">Sectors Covered</p>
+              <p className="text-3xl md:text-4xl font-bold text-primary tabular-nums mb-1">{stats.categories}</p>
+              <p className="text-sm text-muted-foreground">Featured Business Groups</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Featured Startups */}
+      {/* Featured Businesses */}
       <section className="py-16 md:py-24">
         <div className="max-w-[1280px] mx-auto px-4 md:px-6">
           <div className="flex items-center justify-between mb-10">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">Featured Opportunities</h2>
-              <p className="text-muted-foreground">Curated startups with exceptional growth potential</p>
+              <p className="text-muted-foreground">Curated businesses from high-interest consumer and services categories</p>
             </div>
             <Button variant="ghost" className="hidden md:flex text-primary" asChild>
-              <Link href="/startups">
+              <Link href="/businesses">
                 View All
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
@@ -180,15 +180,15 @@ export default function HomePage() {
           </div>
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredStartups.map((startup) => (
-              <StartupCard key={startup.id} {...startup} />
+            {featuredBusinesses.map((business) => (
+              <BusinessCard key={business.id} {...business} />
             ))}
           </div>
 
           <div className="mt-8 text-center md:hidden">
             <Button variant="outline" asChild>
-              <Link href="/startups">
-                View All Startups
+              <Link href="/businesses">
+                View All Businesses
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
@@ -211,7 +211,7 @@ export default function HomePage() {
             <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 border-t-2 border-dashed border-border" />
             
             {[
-              { step: "01", title: "Discover", description: "Browse curated startups across sectors. Filter by stage, funding, and growth metrics." },
+              { step: "01", title: "Discover", description: "Browse curated businesses across featured groups. Filter by stage, category, and growth metrics." },
               { step: "02", title: "Connect", description: "Express interest, access detailed financials, and connect directly with founders." },
               { step: "03", title: "Invest", description: "Complete due diligence with our data room and finalize investments securely." },
             ].map((item, index) => (
@@ -227,29 +227,29 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Sectors */}
+      {/* Featured Groups */}
       <section className="py-16 md:py-24">
         <div className="max-w-[1280px] mx-auto px-4 md:px-6">
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Sectors We Cover</h2>
-            <p className="text-muted-foreground">Diverse opportunities across high-growth industries</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Featured Business Groups</h2>
+            <p className="text-muted-foreground">Start with the categories we want to lead with while keeping the platform open to more business types over time</p>
           </div>
 
           <div className="flex flex-wrap justify-center gap-3">
-            {sectors.map((sector) => (
+            {featuredBusinessGroups.map((sector) => (
               <Link
                 key={sector}
-                href={`/startups?sector=${sector}`}
+                href={`/businesses?sector=${encodeURIComponent(sector)}`}
                 className="px-5 py-2.5 rounded-full border border-border bg-card text-foreground hover:border-primary hover:bg-primary/5 transition-colors text-sm font-medium"
               >
                 {sector}
               </Link>
             ))}
             <Link
-              href="/startups"
+              href="/businesses"
               className="px-5 py-2.5 rounded-full border border-primary bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-colors text-sm font-medium"
             >
-              View All Sectors
+              View All Businesses
             </Link>
           </div>
         </div>

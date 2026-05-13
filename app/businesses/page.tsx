@@ -4,7 +4,7 @@ import { useState, useMemo } from "react"
 import { Search, SlidersHorizontal, X } from "lucide-react"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import { StartupCard } from "@/components/startup-card"
+import { BusinessCard } from "@/components/business-card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { sectors, stages } from "@/lib/data"
@@ -12,19 +12,19 @@ import { cn } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
 import api from "@/lib/api"
 
-export default function StartupsPage() {
+export default function BusinessesPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedSectors, setSelectedSectors] = useState<string[]>([])
   const [selectedStages, setSelectedStages] = useState<string[]>([])
   const [sortBy, setSortBy] = useState<string>("recent")
   const [showFilters, setShowFilters] = useState(false)
 
-  const { data: fetchedStartups = [], isLoading, error } = useQuery({
-    queryKey: ['startups'],
+  const { data: fetchedBusinesses = [], isLoading, error } = useQuery({
+    queryKey: ['businesses'],
     queryFn: async () => {
-      const res = await api.get('/startups?limit=50');
-      // Map backend schema to frontend Startup interface
-      return res.data.data.startups.map((s: any) => ({
+      const res = await api.get('/businesses?limit=50');
+      // Map backend schema to frontend Business interface
+      return res.data.data.businesses.map((s: any) => ({
         id: s.slug,
         name: s.name,
         tagline: s.tagline,
@@ -41,8 +41,8 @@ export default function StartupsPage() {
   });
 
 
-  const filteredStartups = useMemo(() => {
-    let result = [...fetchedStartups]
+  const filteredBusinesses = useMemo(() => {
+    let result = [...fetchedBusinesses]
 
     // Search filter
     if (searchQuery) {
@@ -55,7 +55,7 @@ export default function StartupsPage() {
       )
     }
 
-    // Sector filter
+    // Business group filter
     if (selectedSectors.length > 0) {
       result = result.filter((s) => selectedSectors.includes(s.sector))
     }
@@ -85,7 +85,7 @@ export default function StartupsPage() {
     }
 
     return result
-  }, [fetchedStartups, searchQuery, selectedSectors, selectedStages, sortBy])
+  }, [fetchedBusinesses, searchQuery, selectedSectors, selectedStages, sortBy])
 
   const toggleSector = (sector: string) => {
     setSelectedSectors((prev) =>
@@ -116,8 +116,8 @@ export default function StartupsPage() {
         <div className="max-w-[1280px] mx-auto px-4 md:px-6">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Startup Listings</h1>
-            <p className="text-muted-foreground">Discover high-growth investment opportunities</p>
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Business Listings</h1>
+            <p className="text-muted-foreground">Discover high-conviction ventures across featured business groups and beyond</p>
           </div>
 
           <div className="flex flex-col lg:flex-row gap-8">
@@ -137,9 +137,9 @@ export default function StartupsPage() {
                     )}
                   </div>
 
-                  {/* Sectors */}
+                  {/* Business Groups */}
                   <div className="mb-6">
-                    <h4 className="text-sm font-medium text-foreground mb-3">Sector</h4>
+                    <h4 className="text-sm font-medium text-foreground mb-3">Business Group</h4>
                     <div className="space-y-2">
                       {sectors.map((sector) => (
                         <label
@@ -222,7 +222,7 @@ export default function StartupsPage() {
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     type="text"
-                    placeholder="Search startups..."
+                    placeholder="Search businesses..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10 h-11 bg-card border-border"
@@ -270,7 +270,7 @@ export default function StartupsPage() {
                   
                   <div className="grid sm:grid-cols-2 gap-6">
                     <div>
-                      <h4 className="text-sm font-medium text-foreground mb-3">Sector</h4>
+                      <h4 className="text-sm font-medium text-foreground mb-3">Business Group</h4>
                       <div className="flex flex-wrap gap-2">
                         {sectors.map((sector) => (
                           <button
@@ -325,18 +325,18 @@ export default function StartupsPage() {
               {/* Results count */}
               <div className="flex items-center justify-between mb-6">
                 <p className="text-sm text-muted-foreground">
-                  Showing {filteredStartups.length} startup{filteredStartups.length !== 1 ? "s" : ""}
+                  Showing {filteredBusinesses.length} {filteredBusinesses.length === 1 ? "business" : "businesses"}
                 </p>
                 {isLoading && <span className="text-sm text-primary animate-pulse">Loading updates...</span>}
               </div>
 
-              {/* Startup Grid */}
+              {/* Business Grid */}
               {isLoading ? (
                 <div className="text-center py-16">
                   <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
                     <Search className="w-8 h-8 text-muted-foreground animate-pulse" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Loading startups</h3>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">Loading businesses</h3>
                   <p className="text-muted-foreground">Fetching the latest opportunities...</p>
                 </div>
               ) : error ? (
@@ -344,13 +344,13 @@ export default function StartupsPage() {
                   <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
                     <Search className="w-8 h-8 text-muted-foreground" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Unable to load startups</h3>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">Unable to load businesses</h3>
                   <p className="text-muted-foreground">Please refresh the page and try again.</p>
                 </div>
-              ) : filteredStartups.length > 0 ? (
+              ) : filteredBusinesses.length > 0 ? (
                 <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filteredStartups.map((startup) => (
-                    <StartupCard key={startup.id} {...startup} />
+                  {filteredBusinesses.map((business) => (
+                    <BusinessCard key={business.id} {...business} />
                   ))}
                 </div>
               ) : (
@@ -358,7 +358,7 @@ export default function StartupsPage() {
                   <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
                     <Search className="w-8 h-8 text-muted-foreground" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">No startups found</h3>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">No businesses found</h3>
                   <p className="text-muted-foreground mb-4">Try adjusting your filters or search query</p>
                   <Button variant="outline" onClick={clearFilters}>
                     Clear all filters

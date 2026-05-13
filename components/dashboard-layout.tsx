@@ -13,7 +13,8 @@ import {
   LogOut,
   Menu,
   X,
-  Bell
+  Bell,
+  Clock3
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useEffect, useState } from "react"
@@ -31,8 +32,9 @@ const investorNavItems = [
 
 const adminNavItems = [
   { label: "Overview", href: "/admin?tab=overview", icon: LayoutDashboard, tab: "overview" },
-  { label: "Startups", href: "/admin?tab=startups", icon: Briefcase, tab: "startups" },
+  { label: "Businesses", href: "/admin?tab=businesses", icon: Briefcase, tab: "businesses" },
   { label: "Investors", href: "/admin?tab=investors", icon: TrendingUp, tab: "investors" },
+  { label: "Requests", href: "/admin?tab=requests", icon: Clock3, tab: "requests" },
   { label: "Analytics", href: "/admin?tab=analytics", icon: TrendingUp, tab: "analytics" },
   { label: "Settings", href: "/admin?tab=settings", icon: Settings, tab: "settings" },
 ]
@@ -88,7 +90,7 @@ export function DashboardLayout({
             <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-lg font-semibold text-foreground">VentureFlow</span>
+            <span className="text-lg font-semibold text-foreground">Irresistible</span>
           </Link>
         </div>
 
@@ -146,7 +148,7 @@ export function DashboardLayout({
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
             <TrendingUp className="w-4 h-4 text-primary-foreground" />
           </div>
-          <span className="text-lg font-semibold text-foreground">VentureFlow</span>
+          <span className="text-lg font-semibold text-foreground">Irresistible</span>
         </Link>
         <div className="flex items-center gap-2">
           <button className="w-10 h-10 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground">

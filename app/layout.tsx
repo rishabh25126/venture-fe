@@ -13,8 +13,8 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'VentureFlow | Where Startups Meet Capital',
-  description: 'A premium platform connecting startups seeking investment with investors. Discover opportunities, track portfolios, and manage deal flow.',
+  title: 'Irresistible | Where Businesses Meet Capital',
+  description: 'A premium platform connecting investment-ready businesses with investors. Discover opportunities, track portfolios, and manage deal flow.',
   generator: 'v0.app',
   icons: {
     icon: [

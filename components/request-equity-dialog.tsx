@@ -17,7 +17,7 @@ interface RequestEquityDialogProps {
 export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProps) {
   const [step, setStep] = useState<1 | 2>(1)
   const [formData, setFormData] = useState({
-    startupId: "",
+    businessId: "",
     type: "NEW_INVESTMENT",
     requestedAmount: "",
     requestedShares: "",
@@ -25,12 +25,12 @@ export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProp
     message: ""
   })
 
-  // Fetch all published startups for the dropdown
-  const { data: startups = [] } = useQuery({
-    queryKey: ['all-startups'],
+  // Fetch all published businesses for the dropdown
+  const { data: businesses = [] } = useQuery({
+    queryKey: ['all-businesses'],
     queryFn: async () => {
-      const res = await api.get('/startups?limit=50')
-      return res.data.data.startups
+      const res = await api.get('/businesses?limit=50')
+      return res.data.data.businesses
     },
     enabled: isOpen
   })
@@ -53,7 +53,7 @@ export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProp
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!formData.startupId) return
+    if (!formData.businessId) return
     submitRequest.mutate(formData)
   }
 
@@ -62,7 +62,7 @@ export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProp
     setTimeout(() => {
       setStep(1)
       setFormData({
-        startupId: "",
+        businessId: "",
         type: "NEW_INVESTMENT",
         requestedAmount: "",
         requestedShares: "",
@@ -111,12 +111,12 @@ export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProp
                     <label className="text-sm font-medium text-foreground mb-2 block">Target Company *</label>
                     <select
                       required
-                      value={formData.startupId}
-                      onChange={(e) => setFormData({ ...formData, startupId: e.target.value })}
+                      value={formData.businessId}
+                      onChange={(e) => setFormData({ ...formData, businessId: e.target.value })}
                       className="w-full h-11 px-3 rounded-lg bg-secondary/50 border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                     >
                       <option value="">Select a company...</option>
-                      {startups.map((s: any) => (
+                      {businesses.map((s: any) => (
                         <option key={s._id} value={s._id}>
                           {s.name}
                         </option>
@@ -205,7 +205,7 @@ export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProp
                     <Button 
                       type="submit" 
                       className="w-full" 
-                      disabled={submitRequest.isPending || !formData.startupId}
+                      disabled={submitRequest.isPending || !formData.businessId}
                     >
                       {submitRequest.isPending ? "Submitting..." : "Submit Request"}
                     </Button>

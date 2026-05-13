@@ -70,7 +70,7 @@ export default function DashboardPage() {
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
 
   useEffect(() => {
-    if (user?.role === 'admin') {
+    if (user?.role === 'admin' || user?.role === 'owner') {
       router.push('/admin')
     }
     if (!authLoading && !user) {
@@ -82,20 +82,20 @@ export default function DashboardPage() {
   const greeting = currentHour < 12 ? "Good morning" : currentHour < 18 ? "Good afternoon" : "Good evening"
 
   const { data: portfolioCompanies = [], isLoading } = useQuery({
-    queryKey: ['my-startups'],
+    queryKey: ['my-businesses'],
     queryFn: async () => {
       // Admin users don't have investor access records, so this returns empty unless we handle it
-      const res = await api.get('/access/my-startups');
-      return res.data.data.startups.map((s: any) => ({
-        id: s.startup.slug,
-        name: s.startup.name,
-        sector: s.startup.sector,
+      const res = await api.get('/access/my-businesses');
+      return res.data.data.businesses.map((s: any) => ({
+        id: s.business.slug,
+        name: s.business.name,
+        sector: s.business.sector,
         invested: `₹${(s.investedAmount / 100000).toFixed(2)}L`,
         shares: s.shares,
         equity: `${s.equityPercentage}%`,
         currentValue: "TBD", // To be implemented dynamically later
         change: 0,
-        logo: s.startup.logo || '🏢'
+        logo: s.business.logo || '🏢'
       }));
     },
     // Only fetch if logged in
@@ -236,7 +236,7 @@ export default function DashboardPage() {
                     {portfolioCompanies.length === 0 && !isLoading && (
                       <tr>
                         <td colSpan={6} className="py-8 text-center text-muted-foreground">
-                          No investments found. Request access to startups to see them here.
+                          No investments found. Request access to businesses to see them here.
                         </td>
                       </tr>
                     )}
@@ -275,7 +275,7 @@ export default function DashboardPage() {
                         </td>
                         <td className="py-4 text-right">
                           <Link 
-                            href={`/dashboard/startups/${company.id}`}
+                            href={`/dashboard/businesses/${company.id}`}
                             className="text-sm text-primary hover:text-primary/80"
                           >
                             View

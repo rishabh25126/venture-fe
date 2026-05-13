@@ -4,7 +4,7 @@ import { TrendingUp, Twitter, Linkedin, Github } from "lucide-react"
 const footerLinks = {
   platform: [
     { label: "About", href: "#about" },
-    { label: "Startups", href: "/startups" },
+    { label: "Businesses", href: "/businesses" },
     { label: "Investors", href: "/login" },
     { label: "Contact", href: "#contact" },
   ],
@@ -26,10 +26,10 @@ export function Footer() {
               <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
                 <TrendingUp className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-lg font-semibold text-foreground">VentureFlow</span>
+              <span className="text-lg font-semibold text-foreground">Irresistible</span>
             </Link>
             <p className="text-sm text-muted-foreground max-w-sm mb-6">
-              Connecting visionary startups with strategic investors. Your gateway to discovering and investing in tomorrow&apos;s leading companies.
+              Connecting compelling businesses with strategic investors. Your gateway to discovering and backing high-potential ventures.
             </p>
             <div className="flex items-center gap-3">
               <a 
@@ -95,7 +95,7 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-border">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-muted-foreground">
-              © {new Date().getFullYear()} VentureFlow. All rights reserved.
+              © {new Date().getFullYear()} Irresistible. All rights reserved.
             </p>
             <p className="text-xs text-muted-foreground text-center md:text-right max-w-md">
               Investment involves risk. Past performance is not indicative of future results. Please read all relevant documents before investing.

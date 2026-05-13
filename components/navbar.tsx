@@ -40,7 +40,7 @@ export function Navbar() {
           <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
             <TrendingUp className="w-5 h-5 text-primary-foreground" />
           </div>
-          <span className="text-lg font-semibold text-foreground">VentureFlow</span>
+          <span className="text-lg font-semibold text-foreground">Irresistible</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -52,10 +52,10 @@ export function Navbar() {
             Home
           </Link>
           <Link 
-            href="/startups" 
+            href="/businesses"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
-            Startups
+            Businesses
           </Link>
           <Link 
             href="#about" 
@@ -116,11 +116,11 @@ export function Navbar() {
               Home
             </Link>
             <Link 
-              href="/startups" 
+              href="/businesses"
               className="px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-secondary transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Startups
+              Businesses
             </Link>
             <Link 
               href="#about" 
