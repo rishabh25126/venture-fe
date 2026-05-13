@@ -414,7 +414,7 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
       {isInterestModalOpen && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm p-4">
           <div className="flex min-h-full items-center justify-center">
-            <div className="w-full max-w-lg gradient-card rounded-2xl border border-border bg-card shadow-2xl">
+            <div className="w-full max-w-[calc(100vw-2rem)] sm:max-w-lg gradient-card rounded-2xl border border-border bg-card shadow-2xl">
               <div className="flex items-center justify-between border-b border-border p-6">
                 <div>
                   <h2 className="text-xl font-bold text-foreground">Express Interest</h2>
@@ -485,11 +485,11 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
                     </div>
                   )}
 
-                  <div className="flex gap-3 pt-2">
+                  <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row">
                     <Button
                       type="button"
                       variant="outline"
-                      className="w-full"
+                      className="w-full sm:flex-1"
                       onClick={() => {
                         setIsInterestModalOpen(false)
                         setInterestForm({ name: "", email: "", message: "" })
@@ -498,7 +498,7 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
                     >
                       Cancel
                     </Button>
-                    <Button type="submit" className="w-full" disabled={submitInterest.isPending}>
+                    <Button type="submit" className="w-full sm:flex-1" disabled={submitInterest.isPending}>
                       {submitInterest.isPending ? "Submitting..." : "Submit Interest"}
                     </Button>
                   </div>

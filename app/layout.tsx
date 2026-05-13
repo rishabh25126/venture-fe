@@ -47,15 +47,16 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="bg-background">
+    <html lang="en" className="bg-background" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <ReactQueryProvider>
           <StoreProvider>
             <AuthBootstrap />
             <ThemeProvider
               attribute="class"
+              storageKey="irresistible-theme"
               defaultTheme="light"
-              enableSystem
+              enableSystem={false}
               disableTransitionOnChange
             >
               {children}

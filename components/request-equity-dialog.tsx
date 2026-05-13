@@ -87,7 +87,7 @@ export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProp
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] p-4"
+            className="fixed left-[50%] top-[50%] z-50 w-full max-w-[calc(100vw-2rem)] sm:max-w-lg translate-x-[-50%] translate-y-[-50%] p-4"
           >
             <div className="gradient-card overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
               {/* Header */}
@@ -126,7 +126,7 @@ export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProp
 
                   <div>
                     <label className="text-sm font-medium text-foreground mb-3 block">Request Type *</label>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       <label className={cn(
                         "flex items-center justify-center p-3 rounded-xl border cursor-pointer transition-all",
                         formData.type === "NEW_INVESTMENT"
@@ -158,7 +158,7 @@ export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProp
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                       <label className="text-sm font-medium text-foreground mb-2 block">Amount (₹) *</label>
                       <Input

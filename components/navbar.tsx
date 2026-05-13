@@ -3,13 +3,15 @@
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { TrendingUp, Sun, Moon, Menu, X } from "lucide-react"
+import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
-  const [isDark, setIsDark] = useState(true)
+  const [isMounted, setIsMounted] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { resolvedTheme, setTheme } = useTheme()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,10 +21,15 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
   const toggleTheme = () => {
-    setIsDark(!isDark)
-    document.documentElement.classList.toggle("light")
+    setTheme(resolvedTheme === "dark" ? "light" : "dark")
   }
+
+  const isDark = resolvedTheme === "dark"
 
   return (
     <nav
@@ -73,7 +80,9 @@ export function Navbar() {
             className="w-10 h-10 rounded-lg flex items-center justify-center hover:bg-secondary transition-colors"
             aria-label="Toggle theme"
           >
-            {isDark ? (
+            {!isMounted ? (
+              <Sun className="w-5 h-5 text-muted-foreground" />
+            ) : isDark ? (
               <Sun className="w-5 h-5 text-muted-foreground" />
             ) : (
               <Moon className="w-5 h-5 text-muted-foreground" />

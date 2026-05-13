@@ -142,7 +142,7 @@ export function CreateEditBusinessDialog({ isOpen, onClose, businessId, currentU
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed left-[50%] top-[50%] z-50 w-full max-w-3xl translate-x-[-50%] translate-y-[-50%] p-4"
+            className="fixed left-[50%] top-[50%] z-50 w-full max-w-[calc(100vw-2rem)] sm:max-w-3xl translate-x-[-50%] translate-y-[-50%] p-4"
           >
             <div className="gradient-card max-h-[88vh] overflow-y-auto rounded-2xl border border-border bg-card shadow-2xl">
               <div className="flex items-center justify-between border-b border-border p-6">
@@ -161,7 +161,7 @@ export function CreateEditBusinessDialog({ isOpen, onClose, businessId, currentU
               </div>
 
               <form onSubmit={handleSubmit} className="p-6 space-y-5">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label className="text-sm font-medium text-foreground mb-2 block">Business Name *</label>
                     <Input
@@ -182,7 +182,7 @@ export function CreateEditBusinessDialog({ isOpen, onClose, businessId, currentU
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label className="text-sm font-medium text-foreground mb-2 block">Business Group *</label>
                     <Input
@@ -208,7 +208,7 @@ export function CreateEditBusinessDialog({ isOpen, onClose, businessId, currentU
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label className="text-sm font-medium text-foreground mb-2 block">Tagline</label>
                     <Input
@@ -239,7 +239,7 @@ export function CreateEditBusinessDialog({ isOpen, onClose, businessId, currentU
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label className="text-sm font-medium text-foreground mb-2 block">Problem</label>
                     <textarea
@@ -270,7 +270,7 @@ export function CreateEditBusinessDialog({ isOpen, onClose, businessId, currentU
                 {canManageOwners && (
                   <div>
                     <label className="text-sm font-medium text-foreground mb-2 block">Owners *</label>
-                    <div className="grid grid-cols-2 gap-2 rounded-lg border border-border bg-secondary/30 p-3">
+                    <div className="grid grid-cols-1 gap-2 rounded-lg border border-border bg-secondary/30 p-3 sm:grid-cols-2">
                       {owners.map((owner: any) => {
                         const checked = formData.ownerIds.includes(owner._id)
                         return (
@@ -296,13 +296,13 @@ export function CreateEditBusinessDialog({ isOpen, onClose, businessId, currentU
                   </div>
                 )}
 
-                <div className="pt-4 flex gap-3">
-                  <Button type="button" variant="outline" onClick={handleClose} className="w-full">
+                <div className="pt-4 flex flex-col-reverse gap-3 sm:flex-row">
+                  <Button type="button" variant="outline" onClick={handleClose} className="w-full sm:flex-1">
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    className="w-full"
+                    className="w-full sm:flex-1"
                     disabled={businessMutation.isPending || isOwnerSelectionInvalid}
                   >
                     {businessMutation.isPending ? "Saving..." : isEditing ? "Save Changes" : "Create Business"}
