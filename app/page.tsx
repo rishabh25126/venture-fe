@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { BusinessCard } from "@/components/business-card"
+import { AuthAwareHeroAccess } from "@/components/auth-aware-hero-access"
 import { businesses, featuredBusinessGroups, stats } from "@/lib/data"
 
 export default function HomePage() {
@@ -41,11 +42,7 @@ export default function HomePage() {
                     Explore Businesses
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="h-12 px-6 border-primary text-primary hover:bg-primary hover:text-primary-foreground" asChild>
-                  <Link href="/login">
-                    Investor Login
-                  </Link>
-                </Button>
+                <AuthAwareHeroAccess />
               </div>
             </div>
 

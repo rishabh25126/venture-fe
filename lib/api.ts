@@ -22,6 +22,10 @@ function getApiBaseUrl(): string {
 
 export const apiBaseUrl = getApiBaseUrl();
 
+function isRetryableRefreshFailure(status?: number) {
+  return status === 429 || (status !== undefined && status >= 500);
+}
+
 // We need a reference to the store to dispatch logout on 401
 // In Next.js App Router, we'll access the Redux state via hooks in components,
 // but for interceptors we might need a direct store reference if we export it, 
@@ -95,9 +99,12 @@ api.interceptors.response.use(
         }
         return api(originalRequest);
       } catch (refreshError) {
-        setApiToken(null);
+        const status = axios.isAxiosError(refreshError)
+          ? refreshError.response?.status
+          : undefined;
 
-        if (onUnauthorized) {
+        if (!isRetryableRefreshFailure(status) && onUnauthorized) {
+          setApiToken(null);
           onUnauthorized();
         }
 

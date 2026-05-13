@@ -20,7 +20,8 @@ import { cn } from "@/lib/utils"
 import { useEffect, useState } from "react"
 import api, { setApiToken } from "@/lib/api"
 import { logout } from "@/lib/features/auth/authSlice"
-import { useAppDispatch } from "@/lib/store/hooks"
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks"
+import { getFirstName, getInitials } from "@/lib/auth/route-access"
 
 const investorNavItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -55,10 +56,18 @@ export function DashboardLayout({
   const pathname = usePathname()
   const router = useRouter()
   const dispatch = useAppDispatch()
+  const authUser = useAppSelector((state) => state.auth.user)
   const [currentAdminTab, setCurrentAdminTab] = useState("overview")
   const [sidebarOpen, setSidebarOpen] = useState(false)
   
   const navItems = type === "admin" ? adminNavItems : investorNavItems
+
+  const resolvedName = authUser?.name || userName
+  const resolvedRole = authUser?.role
+    ? authUser.role.charAt(0).toUpperCase() + authUser.role.slice(1)
+    : userRole
+  const firstName = getFirstName(resolvedName)
+  const initials = getInitials(resolvedName)
 
   useEffect(() => {
     if (type !== "admin") return
@@ -125,12 +134,12 @@ export function DashboardLayout({
         <div className="p-4 border-t border-border">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-sm font-bold text-foreground">
-              {userName.charAt(0)}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">{userName}</p>
-              <p className="text-xs text-muted-foreground">{userRole}</p>
-            </div>
+                  {initials}
+                </div>
+                <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground truncate">{firstName}</p>
+              <p className="text-xs text-muted-foreground">{resolvedRole}</p>
+                </div>
             <button 
               onClick={handleLogout}
               className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
@@ -197,11 +206,11 @@ export function DashboardLayout({
             <div className="p-4 border-t border-border">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-sm font-bold text-foreground">
-                  {userName.charAt(0)}
+                  {initials}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">{userName}</p>
-                  <p className="text-xs text-muted-foreground">{userRole}</p>
+                  <p className="text-sm font-medium text-foreground truncate">{firstName}</p>
+                  <p className="text-xs text-muted-foreground">{resolvedRole}</p>
                 </div>
                 <button
                   onClick={handleLogout}

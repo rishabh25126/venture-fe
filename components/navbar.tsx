@@ -2,16 +2,23 @@
 
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import { TrendingUp, Sun, Moon, Menu, X } from "lucide-react"
+import { TrendingUp, Sun, Moon, Menu, X, ChevronDown, LogOut } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks"
+import { getDashboardHref, getFirstName, getInitials } from "@/lib/auth/route-access"
+import api, { setApiToken } from "@/lib/api"
+import { logout } from "@/lib/features/auth/authSlice"
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const { resolvedTheme, setTheme } = useTheme()
+  const dispatch = useAppDispatch()
+  const { user, isLoading } = useAppSelector((state) => state.auth)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,6 +37,22 @@ export function Navbar() {
   }
 
   const isDark = resolvedTheme === "dark"
+  const dashboardHref = user ? getDashboardHref(user.role) : "/dashboard"
+  const firstName = getFirstName(user?.name)
+  const initials = getInitials(user?.name)
+
+  const handleLogout = async () => {
+    try {
+      await api.post("/auth/logout")
+    } catch {
+      // Server logout failure should not block local session cleanup.
+    } finally {
+      setApiToken(null)
+      dispatch(logout())
+      setIsUserMenuOpen(false)
+      setIsMobileMenuOpen(false)
+    }
+  }
 
   return (
     <nav
@@ -89,14 +112,63 @@ export function Navbar() {
             )}
           </button>
 
-          {/* Investor Login - Desktop */}
-          <Button 
-            variant="outline" 
-            className="hidden md:flex border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-            asChild
-          >
-            <Link href="/login">Investor Login</Link>
-          </Button>
+          {isLoading ? (
+            <div className="hidden h-10 w-36 rounded-lg border border-border md:block" aria-hidden="true" />
+          ) : user ? (
+            <>
+              <Button
+                variant="outline"
+                className="hidden md:flex border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                asChild
+              >
+                <Link href={dashboardHref}>Dashboard</Link>
+              </Button>
+              <div className="relative hidden md:block">
+                <button
+                  onClick={() => setIsUserMenuOpen((open) => !open)}
+                  className="flex h-10 items-center gap-3 rounded-lg border border-border bg-card px-3 text-left transition-colors hover:bg-secondary"
+                  aria-label="Open user menu"
+                >
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+                    {initials}
+                  </div>
+                  <span className="text-sm font-medium text-foreground">{firstName}</span>
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                </button>
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-56 rounded-xl border border-border bg-card p-2 shadow-lg">
+                    <div className="px-3 py-2">
+                      <p className="text-sm font-medium text-foreground">{user.name}</p>
+                      <p className="text-xs text-muted-foreground">{user.email}</p>
+                    </div>
+                    <div className="my-1 h-px bg-border" />
+                    <Link
+                      href={dashboardHref}
+                      onClick={() => setIsUserMenuOpen(false)}
+                      className="flex items-center rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-secondary"
+                    >
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="flex w-full items-center rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-secondary"
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <Button
+              variant="outline"
+              className="hidden md:flex border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+              asChild
+            >
+              <Link href="/login">Investor Login</Link>
+            </Button>
+          )}
 
           {/* Mobile Menu Toggle */}
           <button
@@ -138,13 +210,35 @@ export function Navbar() {
             >
               About
             </Link>
-            <div className="pt-2 border-t border-border">
-              <Button 
-                className="w-full"
-                asChild
-              >
-                <Link href="/login">Investor Login</Link>
-              </Button>
+            <div className="pt-2 border-t border-border space-y-2">
+              {isLoading ? null : user ? (
+                <>
+                  <Link
+                    href={dashboardHref}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-secondary transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+                      {initials}
+                    </div>
+                    <span>{firstName}</span>
+                  </Link>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  className="w-full"
+                  asChild
+                >
+                  <Link href="/login">Investor Login</Link>
+                </Button>
+              )}
             </div>
           </div>
         </div>

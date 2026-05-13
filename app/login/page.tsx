@@ -1,18 +1,20 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { TrendingUp, Eye, EyeOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import api, { setApiToken } from "@/lib/api"
-import { useAppDispatch } from "@/lib/store/hooks"
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks"
 import { setCredentials } from "@/lib/features/auth/authSlice"
+import { getDashboardHref } from "@/lib/auth/route-access"
 
 export default function LoginPage() {
   const router = useRouter()
   const dispatch = useAppDispatch()
+  const { user, isAuthenticated, isLoading: authLoading } = useAppSelector((state) => state.auth)
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -20,8 +22,17 @@ export default function LoginPage() {
 
   const [error, setError] = useState("")
 
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      router.replace(getDashboardHref(user.role))
+    }
+  }, [isAuthenticated, router, user])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (authLoading || (isAuthenticated && user)) {
+      return
+    }
     setIsLoading(true)
     setError("")
     
@@ -41,6 +52,16 @@ export default function LoginPage() {
       setError(err.response?.data?.error || "Login failed. Please check your credentials.")
       setIsLoading(false)
     }
+  }
+
+  if (authLoading || (isAuthenticated && user)) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-card">
+        <div className="text-muted-foreground">
+          {isAuthenticated ? "Redirecting to dashboard..." : "Restoring session..."}
+        </div>
+      </main>
+    )
   }
 
   return (

@@ -9,8 +9,7 @@ import { cn } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
 import api from "@/lib/api"
 import { useAppSelector } from "@/lib/store/hooks"
-import { useRouter } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { RequestEquityDialog } from "@/components/request-equity-dialog"
 
 // Mock investor portfolio data
@@ -66,17 +65,7 @@ const upcomingEvents = [
 
 export default function DashboardPage() {
   const { user, isLoading: authLoading } = useAppSelector((state) => state.auth)
-  const router = useRouter()
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
-
-  useEffect(() => {
-    if (user?.role === 'admin' || user?.role === 'owner') {
-      router.push('/admin')
-    }
-    if (!authLoading && !user) {
-      router.push('/login')
-    }
-  }, [authLoading, user, router])
 
   const currentHour = new Date().getHours()
   const greeting = currentHour < 12 ? "Good morning" : currentHour < 18 ? "Good afternoon" : "Good evening"
@@ -111,7 +100,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <DashboardLayout>
+    <DashboardLayout type="investor" userName={user?.name || "Investor"} userRole="Investor">
       <div className="p-6 lg:p-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">

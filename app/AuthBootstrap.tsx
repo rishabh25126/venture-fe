@@ -6,6 +6,13 @@ import { apiBaseUrl, setApiToken, setUnauthorizedHandler } from "@/lib/api";
 import { setCredentials, setLoading, logout } from "@/lib/features/auth/authSlice";
 import { useAppDispatch } from "@/lib/store/hooks";
 
+function shouldRetryRefresh(error: unknown) {
+  if (!axios.isAxiosError(error)) return false;
+
+  const status = error.response?.status;
+  return status === 429 || (status !== undefined && status >= 500);
+}
+
 export default function AuthBootstrap() {
   const dispatch = useAppDispatch();
 
@@ -23,11 +30,21 @@ export default function AuthBootstrap() {
       dispatch(setLoading(true));
 
       try {
-        const res = await axios.post(
-          `${apiBaseUrl}/auth/refresh`,
-          {},
-          { withCredentials: true }
-        );
+        const refresh = () =>
+          axios.post(`${apiBaseUrl}/auth/refresh`, {}, { withCredentials: true });
+
+        let res;
+
+        try {
+          res = await refresh();
+        } catch (error) {
+          if (!shouldRetryRefresh(error)) {
+            throw error;
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 750));
+          res = await refresh();
+        }
 
         if (cancelled) return;
 

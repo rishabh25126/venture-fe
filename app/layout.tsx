@@ -5,6 +5,7 @@ import StoreProvider from './StoreProvider'
 import ReactQueryProvider from './ReactQueryProvider'
 import AuthBootstrap from './AuthBootstrap'
 import { ThemeProvider } from '@/components/theme-provider'
+import { RouteAccessBoundary } from '@/components/route-access-boundary'
 import './globals.css'
 
 const inter = Inter({ 
@@ -59,7 +60,7 @@ export default function RootLayout({
               enableSystem={false}
               disableTransitionOnChange
             >
-              {children}
+              <RouteAccessBoundary>{children}</RouteAccessBoundary>
             </ThemeProvider>
           </StoreProvider>
         </ReactQueryProvider>

@@ -109,15 +109,6 @@ export default function AdminPage() {
   const isManager = isAdmin || isOwner
 
   useEffect(() => {
-    if (user?.role === "investor") {
-      router.push("/dashboard")
-    }
-    if (!authLoading && !user) {
-      router.push("/login")
-    }
-  }, [authLoading, user, router])
-
-  useEffect(() => {
     if (typeof window === "undefined") return
     const requestedTab = new URLSearchParams(window.location.search).get("tab") || "overview"
     setActiveTab(ADMIN_TAB_MAP[requestedTab] || "Overview")
@@ -293,26 +284,6 @@ export default function AdminPage() {
                 : "Manage your assigned businesses, investors, and request reviews"}
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            {activeTab === "Businesses" && isAdmin && (
-              <Button variant="outline" onClick={() => { setSelectedBusinessId(null); setIsBusinessDialogOpen(true) }}>
-                <Plus className="w-4 h-4 mr-2" />
-                Create Business
-              </Button>
-            )}
-            {activeTab === "Investors" && (
-              <Button variant="outline" onClick={() => setIsCreateUserOpen(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                {isAdmin ? "Create User" : "Create Investor"}
-              </Button>
-            )}
-            {activeTab === "Investors" && (
-              <Button onClick={() => setIsAssignEquityOpen(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                Assign Equity
-              </Button>
-            )}
-          </div>
         </div>
 
         <CreateUserDialog
@@ -380,15 +351,51 @@ export default function AdminPage() {
         </div>
 
         {activeTab !== "Requests" && (
-          <div className="relative mb-6 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder={activeTab === "Businesses" ? "Search businesses..." : "Search users..."}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-11 bg-card border-border"
-            />
+          <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="relative max-w-md flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder={activeTab === "Businesses" ? "Search businesses..." : "Search users..."}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 h-11 bg-card border-border"
+              />
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              {activeTab === "Businesses" && isAdmin && (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSelectedBusinessId(null)
+                    setIsBusinessDialogOpen(true)
+                  }}
+                  className="w-full sm:w-auto"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Business
+                </Button>
+              )}
+
+              {activeTab === "Investors" && (
+                <Button
+                  variant="outline"
+                  onClick={() => setIsCreateUserOpen(true)}
+                  className="w-full sm:w-auto"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  {isAdmin ? "Create User" : "Create Investor"}
+                </Button>
+              )}
+
+              {activeTab === "Investors" && (
+                <Button onClick={() => setIsAssignEquityOpen(true)} className="w-full sm:w-auto">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Assign Equity
+                </Button>
+              )}
+            </div>
           </div>
         )}
 
