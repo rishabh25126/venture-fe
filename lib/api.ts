@@ -1,4 +1,8 @@
 import axios from 'axios';
+import {
+  beginNetworkRequest,
+  endNetworkRequest,
+} from "@/lib/ui/request-feedback-store";
 
 const DEFAULT_PRODUCTION_API_URL = 'https://venture-be.vercel.app/api';
 
@@ -54,11 +58,21 @@ export const setUnauthorizedHandler = (handler: (() => void) | null) => {
   onUnauthorized = handler;
 };
 
+function trackRefreshRequest<T>(request: Promise<T>) {
+  beginNetworkRequest();
+  return request.finally(() => {
+    endNetworkRequest();
+  });
+}
+
 // Request interceptor to attach access token
 api.interceptors.request.use(
   (config) => {
     if (currentToken && config.headers) {
       config.headers.Authorization = `Bearer ${currentToken}`;
+    }
+    if (!config.headers?.["x-skip-global-loader"]) {
+      beginNetworkRequest();
     }
     return config;
   },
@@ -67,9 +81,18 @@ api.interceptors.request.use(
 
 // Response interceptor to handle 401s and token refresh
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (!response.config.headers?.["x-skip-global-loader"]) {
+      endNetworkRequest();
+    }
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
+
+    if (!originalRequest?.headers?.["x-skip-global-loader"]) {
+      endNetworkRequest();
+    }
 
     // If error is 401, not on an auth route, and we haven't retried yet
     if (
@@ -82,10 +105,12 @@ api.interceptors.response.use(
 
       try {
         // Attempt to refresh token using httpOnly cookie
-        const res = await axios.post(
-          `${apiBaseUrl}/auth/refresh`,
-          {},
-          { withCredentials: true }
+        const res = await trackRefreshRequest(
+          axios.post(
+            `${apiBaseUrl}/auth/refresh`,
+            {},
+            { withCredentials: true }
+          )
         );
 
         const newAccessToken = res.data.data.accessToken;

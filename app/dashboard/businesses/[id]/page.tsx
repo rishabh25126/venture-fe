@@ -23,6 +23,7 @@ import {
 } from "recharts"
 import { useQuery } from "@tanstack/react-query"
 import { DashboardLayout } from "@/components/dashboard-layout"
+import { ScreenLoader } from "@/components/app-loader"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import api from "@/lib/api"
@@ -131,7 +132,11 @@ export default function InvestorBusinessDetailPage({ params }: { params: Promise
         </Link>
 
         {isLoading || !business ? (
-          <div className="gradient-card rounded-xl border border-border p-12 text-center text-muted-foreground">Loading business details...</div>
+          <ScreenLoader
+            title="Loading business details"
+            description="Preparing your investor access view."
+            className="min-h-[60vh] bg-transparent"
+          />
         ) : (
           <>
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">

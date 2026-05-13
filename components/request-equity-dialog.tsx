@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils"
 import { useQuery, useMutation } from "@tanstack/react-query"
 import api from "@/lib/api"
 import { motion, AnimatePresence } from "framer-motion"
+import { getUserFacingErrorMessage } from "@/lib/errors/user-facing-errors"
 
 interface RequestEquityDialogProps {
   isOpen: boolean
@@ -197,7 +198,7 @@ export function RequestEquityDialog({ isOpen, onClose }: RequestEquityDialogProp
                   {submitRequest.isError && (
                     <div className="flex items-center gap-2 text-sm text-[#EF4444] bg-[#EF4444]/10 p-3 rounded-lg border border-[#EF4444]/20">
                       <AlertCircle className="w-4 h-4 shrink-0" />
-                      <p>{(submitRequest.error as any)?.response?.data?.error || "Failed to submit request"}</p>
+                      <p>{getUserFacingErrorMessage(submitRequest.error, "mutation", "We couldn't submit your request right now.")}</p>
                     </div>
                   )}
 

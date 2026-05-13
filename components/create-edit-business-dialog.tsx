@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import api from "@/lib/api"
 import { motion, AnimatePresence } from "framer-motion"
+import { getUserFacingErrorMessage } from "@/lib/errors/user-facing-errors"
 
 interface BusinessDialogProps {
   isOpen: boolean
@@ -292,7 +293,7 @@ export function CreateEditBusinessDialog({ isOpen, onClose, businessId, currentU
                 {businessMutation.isError && (
                   <div className="flex items-center gap-2 text-sm text-[#EF4444] bg-[#EF4444]/10 p-3 rounded-lg border border-[#EF4444]/20">
                     <AlertCircle className="w-4 h-4 shrink-0" />
-                    <p>{(businessMutation.error as any)?.response?.data?.error || "Failed to save business"}</p>
+                    <p>{getUserFacingErrorMessage(businessMutation.error, "mutation", "We couldn't save this business right now.")}</p>
                   </div>
                 )}
 

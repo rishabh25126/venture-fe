@@ -6,6 +6,8 @@ import ReactQueryProvider from './ReactQueryProvider'
 import AuthBootstrap from './AuthBootstrap'
 import { ThemeProvider } from '@/components/theme-provider'
 import { RouteAccessBoundary } from '@/components/route-access-boundary'
+import { GlobalLoader } from '@/components/app-loader'
+import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
 const inter = Inter({ 
@@ -60,7 +62,9 @@ export default function RootLayout({
               enableSystem={false}
               disableTransitionOnChange
             >
+              <GlobalLoader />
               <RouteAccessBoundary>{children}</RouteAccessBoundary>
+              <Toaster richColors closeButton position="top-right" />
             </ThemeProvider>
           </StoreProvider>
         </ReactQueryProvider>

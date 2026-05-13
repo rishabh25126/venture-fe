@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { motion } from "framer-motion"
 import { ArrowUpRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -48,7 +49,14 @@ export function BusinessCard({
   const stageStyle = stageColors[stage] || { bg: "bg-secondary", text: "text-muted-foreground" }
 
   return (
-    <div className="group relative gradient-card rounded-xl border border-border p-5 transition-all duration-200 hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/10">
+    <motion.div
+      initial={{ opacity: 0, y: 18, scale: 0.98 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, margin: "-40px" }}
+      whileHover={{ y: -6, scale: 1.01 }}
+      transition={{ duration: 0.32, ease: "easeOut" }}
+      className="group relative gradient-card rounded-xl border border-border p-5 transition-colors duration-200 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10"
+    >
       {/* Top badges */}
       <div className="flex items-center gap-2 mb-4">
         <span className={cn("px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wide", sectorStyle.bg, sectorStyle.text)}>
@@ -103,8 +111,12 @@ export function BusinessCard({
           <span>{fundingProgress}%</span>
         </div>
         <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-          <div 
+          <motion.div
             className="h-full bg-primary rounded-full transition-all duration-500"
+            initial={{ width: 0 }}
+            whileInView={{ width: `${fundingProgress}%` }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
             style={{ width: `${fundingProgress}%` }}
           />
         </div>
@@ -116,6 +128,6 @@ export function BusinessCard({
           Express Interest
         </Link>
       </Button>
-    </div>
+    </motion.div>
   )
 }

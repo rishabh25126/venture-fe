@@ -6,10 +6,13 @@ import { useRouter } from "next/navigation"
 import { TrendingUp, Eye, EyeOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { ScreenLoader } from "@/components/app-loader"
+import { ErrorState } from "@/components/ui/error-state"
 import api, { setApiToken } from "@/lib/api"
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks"
 import { setCredentials } from "@/lib/features/auth/authSlice"
 import { getDashboardHref } from "@/lib/auth/route-access"
+import { getUserFacingErrorMessage, logErrorContext } from "@/lib/errors/user-facing-errors"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -18,7 +21,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const [error, setError] = useState("")
 
@@ -33,7 +36,7 @@ export default function LoginPage() {
     if (authLoading || (isAuthenticated && user)) {
       return
     }
-    setIsLoading(true)
+    setIsSubmitting(true)
     setError("")
     
     try {
@@ -49,18 +52,19 @@ export default function LoginPage() {
         router.push("/dashboard")
       }
     } catch (err: any) {
-      setError(err.response?.data?.error || "Login failed. Please check your credentials.")
-      setIsLoading(false)
+      logErrorContext("login", err)
+      setError(getUserFacingErrorMessage(err, "auth", "We couldn't sign you in right now. Please try again."))
+      setIsSubmitting(false)
     }
   }
 
   if (authLoading || (isAuthenticated && user)) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-card">
-        <div className="text-muted-foreground">
-          {isAuthenticated ? "Redirecting to dashboard..." : "Restoring session..."}
-        </div>
-      </main>
+      <ScreenLoader
+        title={isAuthenticated ? "Redirecting" : "Restoring session"}
+        description={isAuthenticated ? "Taking you back to your dashboard." : "Checking your account access."}
+        className="bg-card"
+      />
     )
   }
 
@@ -132,9 +136,10 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-md">
-                <p className="text-sm text-red-500">{error}</p>
-              </div>
+              <ErrorState
+                title="Unable to sign in"
+                message={error}
+              />
             )}
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
@@ -183,8 +188,8 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <Button type="submit" className="w-full h-11" disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Sign In"}
+            <Button type="submit" className="w-full h-11" disabled={isSubmitting}>
+              {isSubmitting ? "Signing in..." : "Sign In"}
             </Button>
           </form>
 

@@ -16,6 +16,7 @@ import {
   ChevronRight,
 } from "lucide-react"
 import { DashboardLayout } from "@/components/dashboard-layout"
+import { ScreenLoader } from "@/components/app-loader"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -263,7 +264,11 @@ export default function AdminPage() {
   if (authLoading) {
     return (
       <DashboardLayout type="admin" userName="Admin" userRole="Administrator">
-        <div className="p-6 lg:p-8 text-muted-foreground">Loading management session...</div>
+        <ScreenLoader
+          title="Restoring session"
+          description="Loading your management workspace."
+          className="min-h-[70vh] bg-transparent"
+        />
       </DashboardLayout>
     )
   }
@@ -647,7 +652,23 @@ export default function AdminPage() {
             </div>
 
             {requestsLoading ? (
-              <div className="gradient-card rounded-xl border border-border p-12 text-center text-muted-foreground">Loading request queue...</div>
+              <div className="gradient-card rounded-xl border border-border p-6">
+                <div className="space-y-3">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <div key={index} className="rounded-xl border border-border bg-secondary/30 p-4">
+                      <div className="mb-3 flex gap-2">
+                        <div className="h-5 w-28 animate-pulse rounded-full bg-secondary" />
+                        <div className="h-5 w-24 animate-pulse rounded-full bg-secondary" />
+                      </div>
+                      <div className="space-y-2">
+                        <div className="h-4 w-1/3 animate-pulse rounded bg-secondary" />
+                        <div className="h-4 w-2/3 animate-pulse rounded bg-secondary" />
+                        <div className="h-4 w-1/2 animate-pulse rounded bg-secondary" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             ) : requests.length === 0 ? (
               <div className="gradient-card rounded-xl border border-border p-12 text-center">
                 <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">

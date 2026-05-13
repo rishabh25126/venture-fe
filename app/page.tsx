@@ -1,4 +1,7 @@
+"use client"
+
 import Link from "next/link"
+import { motion } from "framer-motion"
 import { ArrowRight, Search, TrendingUp, Users, Building2, LayoutGrid } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Navbar } from "@/components/navbar"
@@ -27,15 +30,35 @@ export default function HomePage() {
         <div className="max-w-[1280px] mx-auto px-4 md:px-6 relative">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
             {/* Left content */}
-            <div className="text-center lg:text-left">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight text-balance mb-6">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, ease: "easeOut" }}
+              className="text-center lg:text-left"
+            >
+              <motion.h1
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, ease: "easeOut", delay: 0.05 }}
+                className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight text-balance mb-6"
+              >
                 Where Businesses Meet{" "}
                 <span className="text-primary">Capital</span>
-              </h1>
-              <p className="text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-8 text-pretty">
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, ease: "easeOut", delay: 0.12 }}
+                className="text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-8 text-pretty"
+              >
                 Discover compelling businesses, review curated operating data, and back ventures built for durable growth. Irresistible brings premium deal flow into one place.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, ease: "easeOut", delay: 0.18 }}
+                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+              >
                 <Button size="lg" className="h-12 px-6" asChild>
                   <Link href="/businesses">
                     <Search className="w-4 h-4 mr-2" />
@@ -43,12 +66,17 @@ export default function HomePage() {
                   </Link>
                 </Button>
                 <AuthAwareHeroAccess />
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
             {/* Right - Floating cards */}
             <div className="hidden lg:block relative h-[400px]">
-              <div className="absolute top-0 right-0 w-[320px] rotate-3 transform hover:rotate-0 transition-transform duration-500">
+              <motion.div
+                initial={{ opacity: 0, x: 36, rotate: 8 }}
+                animate={{ opacity: 1, x: 0, rotate: 3, y: [0, -8, 0] }}
+                transition={{ duration: 0.7, ease: "easeOut", y: { duration: 6, repeat: Infinity, ease: "easeInOut" } }}
+                className="absolute top-0 right-0 w-[320px] transform hover:rotate-0 transition-transform duration-500"
+              >
                 <div className="gradient-card rounded-xl border border-border p-5 shadow-2xl">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase bg-[#1E3A5F] text-[#60A5FA]">
@@ -70,9 +98,14 @@ export default function HomePage() {
                     <span className="text-[#10B981] font-semibold">+142%</span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
               
-              <div className="absolute top-24 right-20 w-[300px] -rotate-2 transform hover:rotate-0 transition-transform duration-500">
+              <motion.div
+                initial={{ opacity: 0, x: 24, rotate: -10 }}
+                animate={{ opacity: 1, x: 0, rotate: -2, y: [0, 10, 0] }}
+                transition={{ duration: 0.7, ease: "easeOut", delay: 0.08, y: { duration: 6.5, repeat: Infinity, ease: "easeInOut" } }}
+                className="absolute top-24 right-20 w-[300px] transform hover:rotate-0 transition-transform duration-500"
+              >
                 <div className="gradient-card rounded-xl border border-border p-5 shadow-2xl">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase bg-[#14432A] text-[#34D399]">
@@ -94,9 +127,14 @@ export default function HomePage() {
                     <span className="text-[#10B981] font-semibold">+89%</span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
               
-              <div className="absolute top-52 right-8 w-[280px] rotate-1 transform hover:rotate-0 transition-transform duration-500">
+              <motion.div
+                initial={{ opacity: 0, x: 18, rotate: 6 }}
+                animate={{ opacity: 1, x: 0, rotate: 1, y: [0, -12, 0] }}
+                transition={{ duration: 0.7, ease: "easeOut", delay: 0.14, y: { duration: 7, repeat: Infinity, ease: "easeInOut" } }}
+                className="absolute top-52 right-8 w-[280px] transform hover:rotate-0 transition-transform duration-500"
+              >
                 <div className="gradient-card rounded-xl border border-border p-5 shadow-2xl">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase bg-[#3D1F5C] text-[#A78BFA]">
@@ -118,7 +156,7 @@ export default function HomePage() {
                     <span className="text-[#10B981] font-semibold">+215%</span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
@@ -128,34 +166,58 @@ export default function HomePage() {
       <section className="py-12 md:py-16 border-y border-border bg-card">
         <div className="max-w-[1280px] mx-auto px-4 md:px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.35, delay: 0 }}
+              className="text-center"
+            >
               <div className="flex items-center justify-center gap-2 mb-2">
                 <TrendingUp className="w-5 h-5 text-primary" />
               </div>
               <p className="text-3xl md:text-4xl font-bold text-primary tabular-nums mb-1">{stats.deployed}</p>
               <p className="text-sm text-muted-foreground">Capital Deployed</p>
-            </div>
-            <div className="text-center">
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.35, delay: 0.05 }}
+              className="text-center"
+            >
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Building2 className="w-5 h-5 text-primary" />
               </div>
               <p className="text-3xl md:text-4xl font-bold text-primary tabular-nums mb-1">{stats.businesses}</p>
               <p className="text-sm text-muted-foreground">Businesses Listed</p>
-            </div>
-            <div className="text-center">
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.35, delay: 0.1 }}
+              className="text-center"
+            >
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Users className="w-5 h-5 text-primary" />
               </div>
               <p className="text-3xl md:text-4xl font-bold text-primary tabular-nums mb-1">{stats.investors}</p>
               <p className="text-sm text-muted-foreground">Active Investors</p>
-            </div>
-            <div className="text-center">
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.35, delay: 0.15 }}
+              className="text-center"
+            >
               <div className="flex items-center justify-center gap-2 mb-2">
                 <LayoutGrid className="w-5 h-5 text-primary" />
               </div>
               <p className="text-3xl md:text-4xl font-bold text-primary tabular-nums mb-1">{stats.categories}</p>
               <p className="text-sm text-muted-foreground">Featured Business Groups</p>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -163,7 +225,13 @@ export default function HomePage() {
       {/* Featured Businesses */}
       <section className="py-16 md:py-24">
         <div className="max-w-[1280px] mx-auto px-4 md:px-6">
-          <div className="flex items-center justify-between mb-10">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.4 }}
+            className="flex items-center justify-between mb-10"
+          >
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">Featured Opportunities</h2>
               <p className="text-muted-foreground">Curated businesses from high-interest consumer and services categories</p>
@@ -174,7 +242,7 @@ export default function HomePage() {
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
-          </div>
+          </motion.div>
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredBusinesses.map((business) => (
@@ -196,12 +264,18 @@ export default function HomePage() {
       {/* How It Works */}
       <section className="py-16 md:py-24 bg-card border-y border-border" id="about">
         <div className="max-w-[1280px] mx-auto px-4 md:px-6">
-          <div className="text-center mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.4 }}
+            className="text-center mb-12"
+          >
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">How It Works</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               A streamlined process to connect you with high-potential investment opportunities
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8 relative">
             {/* Connecting line - desktop only */}
@@ -212,13 +286,20 @@ export default function HomePage() {
               { step: "02", title: "Connect", description: "Express interest, access detailed financials, and connect directly with founders." },
               { step: "03", title: "Invest", description: "Complete due diligence with our data room and finalize investments securely." },
             ].map((item, index) => (
-              <div key={item.step} className="relative text-center">
+              <motion.div
+                key={item.step}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.4, delay: index * 0.08 }}
+                className="relative text-center"
+              >
                 <div className="w-16 h-16 rounded-full bg-primary/10 border-2 border-primary mx-auto mb-6 flex items-center justify-center">
                   <span className="text-xl font-bold text-primary">{item.step}</span>
                 </div>
                 <h3 className="text-xl font-semibold text-foreground mb-3">{item.title}</h3>
                 <p className="text-muted-foreground">{item.description}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -227,12 +308,24 @@ export default function HomePage() {
       {/* Featured Groups */}
       <section className="py-16 md:py-24">
         <div className="max-w-[1280px] mx-auto px-4 md:px-6">
-          <div className="text-center mb-10">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.4 }}
+            className="text-center mb-10"
+          >
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Featured Business Groups</h2>
             <p className="text-muted-foreground">Start with the categories we want to lead with while keeping the platform open to more business types over time</p>
-          </div>
+          </motion.div>
 
-          <div className="flex flex-wrap justify-center gap-3">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.4, delay: 0.08 }}
+            className="flex flex-wrap justify-center gap-3"
+          >
             {featuredBusinessGroups.map((sector) => (
               <Link
                 key={sector}
@@ -248,7 +341,7 @@ export default function HomePage() {
             >
               View All Businesses
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
 

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import api from "@/lib/api"
 import { motion, AnimatePresence } from "framer-motion"
+import { getUserFacingErrorMessage } from "@/lib/errors/user-facing-errors"
 
 interface AssignEquityDialogProps {
   isOpen: boolean
@@ -186,7 +187,7 @@ export function AssignEquityDialog({ isOpen, onClose, preselectedInvestorId }: A
                 {assignEquity.isError && (
                   <div className="flex items-center gap-2 text-sm text-[#EF4444] bg-[#EF4444]/10 p-3 rounded-lg border border-[#EF4444]/20 mt-4">
                     <AlertCircle className="w-4 h-4 shrink-0" />
-                    <p>{(assignEquity.error as any)?.response?.data?.error || "Failed to assign equity"}</p>
+                    <p>{getUserFacingErrorMessage(assignEquity.error, "mutation", "We couldn't assign equity right now.")}</p>
                   </div>
                 )}
 

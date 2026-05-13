@@ -20,12 +20,16 @@ import {
 import { Area, AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
+import { ScreenLoader } from "@/components/app-loader"
 import { Button } from "@/components/ui/button"
+import { ErrorState } from "@/components/ui/error-state"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
 import api from "@/lib/api"
 import { useMutation } from "@tanstack/react-query"
+import { AnimatePresence, motion } from "framer-motion"
+import { getUserFacingErrorMessage } from "@/lib/errors/user-facing-errors"
 
 const tabs = ["Overview", "Team", "Metrics", "Pitch Deck"]
 
@@ -126,12 +130,8 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
       <main className="min-h-screen">
         <Navbar />
         <div className="pt-24 pb-16">
-          <div className="max-w-[960px] mx-auto px-4 md:px-6 text-center py-20">
-            <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
-              <Building2 className="w-8 h-8 text-muted-foreground animate-pulse" />
-            </div>
-            <h1 className="text-xl font-semibold text-foreground mb-2">Loading business</h1>
-            <p className="text-muted-foreground">Fetching the latest venture profile...</p>
+          <div className="max-w-[960px] mx-auto px-4 md:px-6">
+            <ScreenLoader title="Loading business" description="Fetching the latest venture profile." className="min-h-[60vh] bg-transparent" />
           </div>
         </div>
         <Footer />
@@ -144,15 +144,13 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
       <main className="min-h-screen">
         <Navbar />
         <div className="pt-24 pb-16">
-          <div className="max-w-[960px] mx-auto px-4 md:px-6 text-center py-20">
-            <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
-              <Building2 className="w-8 h-8 text-muted-foreground" />
-            </div>
-            <h1 className="text-xl font-semibold text-foreground mb-2">Business not found</h1>
-            <p className="text-muted-foreground mb-6">This business profile is unavailable or has been unpublished.</p>
-            <Link href="/businesses">
-              <Button variant="outline">Back to businesses</Button>
-            </Link>
+          <div className="max-w-[960px] mx-auto px-4 md:px-6 py-20">
+            <ErrorState
+              title="Business not found"
+              message="This business profile is unavailable or has been unpublished."
+              actionLabel="Back to businesses"
+              onAction={() => (window.location.href = "/businesses")}
+            />
           </div>
         </div>
         <Footer />
@@ -182,7 +180,12 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
             {/* Main Content */}
             <div>
               {/* Hero */}
-              <div className="gradient-card rounded-xl border border-border p-6 md:p-8 mb-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="gradient-card rounded-xl border border-border p-6 md:p-8 mb-8"
+              >
                 <div className="flex flex-col sm:flex-row sm:items-start gap-4 mb-6">
                   <div className="w-20 h-20 rounded-2xl bg-secondary flex items-center justify-center text-4xl shrink-0">
                     {business.logo}
@@ -217,7 +220,7 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
                     </Button>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Tabs */}
               <div className="border-b border-border mb-8">
@@ -240,8 +243,16 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
               </div>
 
               {/* Tab Content */}
+              <AnimatePresence mode="wait">
               {activeTab === "Overview" && (
-                <div className="space-y-8">
+                <motion.div
+                  key="overview"
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.24 }}
+                  className="space-y-8"
+                >
                   <div>
                     <h2 className="text-xl font-semibold text-foreground mb-4">Business Summary</h2>
                     <p className="text-muted-foreground leading-relaxed">{business.description}</p>
@@ -257,11 +268,17 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
                       <p className="text-muted-foreground text-sm leading-relaxed">{business.solution}</p>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               )}
 
               {activeTab === "Team" && (
-                <div>
+                <motion.div
+                  key="team"
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.24 }}
+                >
                   <h2 className="text-xl font-semibold text-foreground mb-6">Leadership Team</h2>
                   <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
                     {business.team.map((member) => (
@@ -283,11 +300,18 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
                       </div>
                     ))}
                   </div>
-                </div>
+                </motion.div>
               )}
 
               {activeTab === "Metrics" && (
-                <div className="space-y-8">
+                <motion.div
+                  key="metrics"
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.24 }}
+                  className="space-y-8"
+                >
                   {/* Key Metrics */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[
@@ -361,11 +385,17 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
                       </ResponsiveContainer>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               )}
 
               {activeTab === "Pitch Deck" && (
-                <div>
+                <motion.div
+                  key="pitch"
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.24 }}
+                >
                   <div className="gradient-card rounded-xl border border-border p-8 text-center">
                     <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
                       <Lock className="w-8 h-8 text-muted-foreground" />
@@ -379,8 +409,9 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
                       Request Access
                     </Button>
                   </div>
-                </div>
+                </motion.div>
               )}
+              </AnimatePresence>
             </div>
 
             {/* Sidebar */}
@@ -481,7 +512,7 @@ export default function BusinessProfilePage({ params }: { params: Promise<{ id: 
                   {submitInterest.isError && (
                     <div className="flex items-center gap-2 text-sm text-[#EF4444] bg-[#EF4444]/10 p-3 rounded-lg border border-[#EF4444]/20">
                       <AlertCircle className="w-4 h-4 shrink-0" />
-                      <p>{(submitInterest.error as any)?.response?.data?.error || "Failed to submit interest"}</p>
+                      <p>{getUserFacingErrorMessage(submitInterest.error, "mutation", "We couldn't submit your interest right now.")}</p>
                     </div>
                   )}
 

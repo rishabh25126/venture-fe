@@ -7,6 +7,7 @@ import { Footer } from "@/components/footer"
 import { BusinessCard } from "@/components/business-card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { ErrorState } from "@/components/ui/error-state"
 import { sectors, stages } from "@/lib/data"
 import { cn } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
@@ -327,26 +328,51 @@ export default function BusinessesPage() {
                 <p className="text-sm text-muted-foreground">
                   Showing {filteredBusinesses.length} {filteredBusinesses.length === 1 ? "business" : "businesses"}
                 </p>
-                {isLoading && <span className="text-sm text-primary animate-pulse">Loading updates...</span>}
               </div>
 
               {/* Business Grid */}
               {isLoading ? (
-                <div className="text-center py-16">
-                  <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
-                    <Search className="w-8 h-8 text-muted-foreground animate-pulse" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Loading businesses</h3>
-                  <p className="text-muted-foreground">Fetching the latest opportunities...</p>
+                <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {Array.from({ length: 6 }).map((_, index) => (
+                    <div
+                      key={index}
+                      className="gradient-card rounded-xl border border-border p-5"
+                    >
+                      <div className="mb-4 flex gap-2">
+                        <div className="h-6 w-28 animate-pulse rounded-full bg-secondary" />
+                        <div className="h-6 w-20 animate-pulse rounded-full bg-secondary" />
+                      </div>
+                      <div className="mb-4 flex items-start gap-3">
+                        <div className="h-10 w-10 animate-pulse rounded-full bg-secondary" />
+                        <div className="flex-1 space-y-2">
+                          <div className="h-5 w-2/3 animate-pulse rounded bg-secondary" />
+                          <div className="h-4 w-full animate-pulse rounded bg-secondary" />
+                        </div>
+                      </div>
+                      <div className="my-4 h-px bg-border" />
+                      <div className="mb-4 grid grid-cols-3 gap-3">
+                        {Array.from({ length: 3 }).map((__, metricIndex) => (
+                          <div key={metricIndex} className="space-y-2">
+                            <div className="h-3 w-16 animate-pulse rounded bg-secondary" />
+                            <div className="h-4 w-14 animate-pulse rounded bg-secondary" />
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mb-4 space-y-2">
+                        <div className="h-3 w-24 animate-pulse rounded bg-secondary" />
+                        <div className="h-2 animate-pulse rounded-full bg-secondary" />
+                      </div>
+                      <div className="h-10 animate-pulse rounded-lg bg-secondary" />
+                    </div>
+                  ))}
                 </div>
               ) : error ? (
-                <div className="text-center py-16">
-                  <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
-                    <Search className="w-8 h-8 text-muted-foreground" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Unable to load businesses</h3>
-                  <p className="text-muted-foreground">Please refresh the page and try again.</p>
-                </div>
+                <ErrorState
+                  title="Unable to load businesses"
+                  message="We couldn't load this data right now."
+                  actionLabel="Try again"
+                  onAction={() => window.location.reload()}
+                />
               ) : filteredBusinesses.length > 0 ? (
                 <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
                   {filteredBusinesses.map((business) => (

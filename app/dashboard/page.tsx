@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Calendar, FileText, Bell, TrendingUp, Briefcase, PercentIcon, Building2, ArrowUpRight, ArrowDownRight } from "lucide-react"
 import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts"
 import { DashboardLayout } from "@/components/dashboard-layout"
+import { ScreenLoader } from "@/components/app-loader"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
@@ -94,7 +95,11 @@ export default function DashboardPage() {
   if (authLoading) {
     return (
       <DashboardLayout>
-        <div className="p-6 lg:p-8 text-muted-foreground">Loading investor session...</div>
+        <ScreenLoader
+          title="Restoring session"
+          description="Loading your investor workspace."
+          className="min-h-[70vh] bg-transparent"
+        />
       </DashboardLayout>
     )
   }
@@ -231,8 +236,18 @@ export default function DashboardPage() {
                     )}
                     {isLoading && (
                       <tr>
-                        <td colSpan={6} className="py-8 text-center text-primary animate-pulse">
-                          Loading portfolio...
+                        <td colSpan={6} className="py-6">
+                          <div className="grid gap-3">
+                            {Array.from({ length: 3 }).map((_, index) => (
+                              <div key={index} className="grid grid-cols-6 gap-3 rounded-lg bg-secondary/40 px-4 py-3">
+                                <div className="col-span-2 h-4 animate-pulse rounded bg-secondary" />
+                                <div className="h-4 animate-pulse rounded bg-secondary" />
+                                <div className="h-4 animate-pulse rounded bg-secondary" />
+                                <div className="h-4 animate-pulse rounded bg-secondary" />
+                                <div className="h-4 animate-pulse rounded bg-secondary" />
+                              </div>
+                            ))}
+                          </div>
                         </td>
                       </tr>
                     )}
