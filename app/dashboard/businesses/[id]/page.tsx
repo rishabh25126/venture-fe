@@ -1,8 +1,8 @@
 "use client"
 
-import { use, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import Link from "next/link"
-import { notFound } from "next/navigation"
+import { notFound, useParams } from "next/navigation"
 import {
   ArrowLeft,
   Building2,
@@ -29,6 +29,11 @@ import { cn } from "@/lib/utils"
 import api from "@/lib/api"
 
 const tabs = ["Overview", "Financials", "Documents", "Updates", "Cap Table"]
+type CapTableSlice = {
+  name: string
+  value: number
+  color: string
+}
 
 const documents = [
   {
@@ -68,11 +73,11 @@ function formatCurrency(amount?: number) {
 }
 
 export default function InvestorBusinessDetailPage({
-  params,
 }: {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }) {
-  const resolvedParams = use(params)
+  const params = useParams<{ id: string }>()
+  const businessSlug = params.id
   const [activeTab, setActiveTab] = useState("Overview")
 
   const { data: portfolioData, isLoading } = useQuery({
@@ -86,9 +91,9 @@ export default function InvestorBusinessDetailPage({
   const portfolioEntry = useMemo(
     () =>
       portfolioData?.find(
-        (entry: any) => entry.business?.slug === resolvedParams.id
+        (entry: any) => entry.business?.slug === businessSlug
       ),
-    [portfolioData, resolvedParams.id]
+    [businessSlug, portfolioData]
   )
 
   const business = portfolioEntry?.business
@@ -118,7 +123,7 @@ export default function InvestorBusinessDetailPage({
   const investors = investorsData || []
   const owners = ownersData || []
 
-  const capTableData = investors
+  const capTableData: CapTableSlice[] = investors
     .filter((record: any) => Number(record.equityPercentage) > 0)
     .map((record: any, index: number) => ({
       name: record.investorId?.name || `Investor ${index + 1}`,
@@ -386,9 +391,11 @@ export default function InvestorBusinessDetailPage({
                           paddingAngle={2}
                           dataKey="value"
                         >
-                          {capTableData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
+                          {capTableData.map(
+                            (entry: CapTableSlice, index: number) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            )
+                          )}
                         </Pie>
                         <Tooltip
                           contentStyle={{

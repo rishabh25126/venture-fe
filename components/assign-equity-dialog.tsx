@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { X, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,26 +8,65 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import api from "@/lib/api"
 import { motion, AnimatePresence } from "framer-motion"
 import { getUserFacingErrorMessage } from "@/lib/errors/user-facing-errors"
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog"
 
 interface AssignEquityDialogProps {
   isOpen: boolean
   onClose: () => void
   preselectedInvestorId?: string
+  preselectedBusinessId?: string
+  initialValues?: {
+    investedAmount?: number
+    shares?: number
+    equityPercentage?: number
+  }
+  lockInvestor?: boolean
+  lockBusiness?: boolean
+  title?: string
+  description?: string
+  submitLabel?: string
+  onSuccess?: () => void
 }
 
 export function AssignEquityDialog({
   isOpen,
   onClose,
   preselectedInvestorId,
+  preselectedBusinessId,
+  initialValues,
+  lockInvestor = false,
+  lockBusiness = false,
+  title = "Assign Equity",
+  description = "Grant an investor access and equity in a business",
+  submitLabel = "Assign Equity",
+  onSuccess,
 }: AssignEquityDialogProps) {
   const queryClient = useQueryClient()
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [formData, setFormData] = useState({
     investorId: preselectedInvestorId || "",
-    businessId: "",
-    investedAmount: "",
-    shares: "",
-    equityPercentage: "",
+    businessId: preselectedBusinessId || "",
+    investedAmount: initialValues?.investedAmount?.toString() || "",
+    shares: initialValues?.shares?.toString() || "",
+    equityPercentage: initialValues?.equityPercentage?.toString() || "",
   })
+
+  const isEditing =
+    Boolean(initialValues?.investedAmount) ||
+    Boolean(initialValues?.shares) ||
+    Boolean(initialValues?.equityPercentage)
+
+  useEffect(() => {
+    if (!isOpen) return
+
+    setFormData({
+      investorId: preselectedInvestorId || "",
+      businessId: preselectedBusinessId || "",
+      investedAmount: initialValues?.investedAmount?.toString() || "",
+      shares: initialValues?.shares?.toString() || "",
+      equityPercentage: initialValues?.equityPercentage?.toString() || "",
+    })
+  }, [initialValues, isOpen, preselectedBusinessId, preselectedInvestorId])
 
   const { data: businesses = [] } = useQuery({
     queryKey: ["admin-businesses"],
@@ -61,13 +100,18 @@ export function AssignEquityDialog({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-investors"] })
+      queryClient.invalidateQueries({ queryKey: ["business-investors"] })
+      queryClient.invalidateQueries({ queryKey: ["admin-user"] })
+      queryClient.invalidateQueries({ queryKey: ["my-businesses"] })
+      onSuccess?.()
+      setIsConfirmOpen(false)
       handleClose()
     },
   })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    assignEquity.mutate(formData)
+    setIsConfirmOpen(true)
   }
 
   const handleClose = () => {
@@ -75,12 +119,13 @@ export function AssignEquityDialog({
     setTimeout(() => {
       setFormData({
         investorId: preselectedInvestorId || "",
-        businessId: "",
-        investedAmount: "",
-        shares: "",
-        equityPercentage: "",
+        businessId: preselectedBusinessId || "",
+        investedAmount: initialValues?.investedAmount?.toString() || "",
+        shares: initialValues?.shares?.toString() || "",
+        equityPercentage: initialValues?.equityPercentage?.toString() || "",
       })
       assignEquity.reset()
+      setIsConfirmOpen(false)
     }, 300)
   }
 
@@ -105,10 +150,10 @@ export function AssignEquityDialog({
               <div className="flex items-center justify-between border-b border-border p-6">
                 <div>
                   <h2 className="text-xl font-bold text-foreground">
-                    Assign Equity
+                    {title}
                   </h2>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Grant an investor access and equity in a business
+                    {description}
                   </p>
                 </div>
                 <button
@@ -128,6 +173,7 @@ export function AssignEquityDialog({
                     <select
                       required
                       value={formData.investorId}
+                      disabled={lockInvestor}
                       onChange={(e) =>
                         setFormData({ ...formData, investorId: e.target.value })
                       }
@@ -149,6 +195,7 @@ export function AssignEquityDialog({
                     <select
                       required
                       value={formData.businessId}
+                      disabled={lockBusiness}
                       onChange={(e) =>
                         setFormData({ ...formData, businessId: e.target.value })
                       }
@@ -243,6 +290,8 @@ export function AssignEquityDialog({
                   <Button
                     type="submit"
                     className="w-full sm:flex-1"
+                    loading={assignEquity.isPending}
+                    loaderLabel={isEditing ? "Saving equity" : "Assigning equity"}
                     disabled={
                       assignEquity.isPending ||
                       !formData.investorId ||
@@ -250,12 +299,26 @@ export function AssignEquityDialog({
                       Number(formData.investedAmount) <= 0
                     }
                   >
-                    {assignEquity.isPending ? "Assigning..." : "Assign Equity"}
+                    {submitLabel}
                   </Button>
                 </div>
               </form>
             </div>
           </motion.div>
+
+          <ConfirmationDialog
+            isOpen={isConfirmOpen}
+            onClose={() => setIsConfirmOpen(false)}
+            onConfirm={() => assignEquity.mutate(formData)}
+            title={isEditing ? "Confirm equity update" : "Confirm equity assignment"}
+            description={
+              isEditing
+                ? "This will update the investor's equity allocation for this business."
+                : "This will assign the investor to this business and grant equity access."
+            }
+            confirmLabel={submitLabel}
+            isPending={assignEquity.isPending}
+          />
         </>
       )}
     </AnimatePresence>

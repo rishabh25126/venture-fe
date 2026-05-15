@@ -4,7 +4,10 @@ export interface User {
   id: string
   name: string
   email: string
-  role: "investor" | "owner" | "admin"
+  role: string
+  baseRole: "investor" | "owner" | "admin" | "super_admin"
+  permissions: string[]
+  isActive?: boolean
 }
 
 interface AuthState {

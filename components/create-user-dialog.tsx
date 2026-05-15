@@ -8,26 +8,38 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import api from "@/lib/api"
 import { motion, AnimatePresence } from "framer-motion"
 import { getUserFacingErrorMessage } from "@/lib/errors/user-facing-errors"
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog"
 
 interface CreateUserDialogProps {
   isOpen: boolean
   onClose: () => void
   currentUserRole?: "admin" | "owner"
+  forcedRole?: "investor" | "owner"
+  allowOwnerCreation?: boolean
 }
 
 export function CreateUserDialog({
   isOpen,
   onClose,
   currentUserRole = "admin",
+  forcedRole,
+  allowOwnerCreation = true,
 }: CreateUserDialogProps) {
   const queryClient = useQueryClient()
-  const defaultRole = currentUserRole === "owner" ? "investor" : "investor"
-  const [formData, setFormData] = useState({
+  const defaultRole =
+    forcedRole || (currentUserRole === "owner" ? "investor" : "investor")
+  const [formData, setFormData] = useState<{
+    name: string
+    email: string
+    password: string
+    role: "investor" | "owner"
+  }>({
     name: "",
     email: "",
     password: "",
     role: defaultRole,
   })
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
 
   const createUser = useMutation({
     mutationFn: async (data: typeof formData) => {
@@ -44,7 +56,7 @@ export function CreateUserDialog({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    createUser.mutate(formData)
+    setIsConfirmOpen(true)
   }
 
   const handleClose = () => {
@@ -57,6 +69,7 @@ export function CreateUserDialog({
         role: defaultRole,
       })
       createUser.reset()
+      setIsConfirmOpen(false)
     }, 300)
   }
 
@@ -100,7 +113,7 @@ export function CreateUserDialog({
               </div>
 
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                {currentUserRole === "admin" && (
+                {currentUserRole === "admin" && !forcedRole && allowOwnerCreation && (
                   <div>
                     <label className="text-sm font-medium text-foreground mb-2 block">
                       Account Type
@@ -108,7 +121,10 @@ export function CreateUserDialog({
                     <select
                       value={formData.role}
                       onChange={(e) =>
-                        setFormData({ ...formData, role: e.target.value })
+                        setFormData({
+                          ...formData,
+                          role: e.target.value as "investor" | "owner",
+                        })
                       }
                       className="w-full h-11 px-3 rounded-lg bg-secondary/50 border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                     >
@@ -191,18 +207,30 @@ export function CreateUserDialog({
                   <Button
                     type="submit"
                     className="w-full sm:flex-1"
-                    disabled={createUser.isPending}
+                    loading={createUser.isPending}
+                    loaderLabel={
+                      isCreatingOwner ? "Creating owner" : "Creating investor"
+                    }
                   >
-                    {createUser.isPending
-                      ? "Creating..."
-                      : isCreatingOwner
-                        ? "Create Owner"
-                        : "Create Investor"}
+                    {isCreatingOwner ? "Create Owner" : "Create Investor"}
                   </Button>
                 </div>
               </form>
             </div>
           </motion.div>
+          <ConfirmationDialog
+            isOpen={isConfirmOpen}
+            onClose={() => setIsConfirmOpen(false)}
+            onConfirm={() => createUser.mutate(formData)}
+            title={isCreatingOwner ? "Create owner account" : "Create investor account"}
+            description={
+              isCreatingOwner
+                ? "This will create a new owner account that can be assigned to businesses."
+                : "This will create a new investor account that can be assigned to businesses."
+            }
+            confirmLabel={isCreatingOwner ? "Create Owner" : "Create Investor"}
+            isPending={createUser.isPending}
+          />
         </>
       )}
     </AnimatePresence>

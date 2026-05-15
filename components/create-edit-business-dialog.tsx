@@ -8,12 +8,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import api from "@/lib/api"
 import { motion, AnimatePresence } from "framer-motion"
 import { getUserFacingErrorMessage } from "@/lib/errors/user-facing-errors"
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog"
 
 interface BusinessDialogProps {
   isOpen: boolean
   onClose: () => void
   businessId?: string | null
   currentUserRole: "admin" | "owner"
+  canManageOwners?: boolean
 }
 
 const DEFAULT_FORM = {
@@ -35,12 +37,15 @@ export function CreateEditBusinessDialog({
   onClose,
   businessId,
   currentUserRole,
+  canManageOwners: canManageOwnersOverride,
 }: BusinessDialogProps) {
   const queryClient = useQueryClient()
   const [formData, setFormData] = useState(DEFAULT_FORM)
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
 
   const isEditing = Boolean(businessId)
-  const canManageOwners = currentUserRole === "admin"
+  const canManageOwners =
+    canManageOwnersOverride ?? currentUserRole === "admin"
 
   const { data: owners = [] } = useQuery({
     queryKey: ["admin-owners"],
@@ -117,6 +122,7 @@ export function CreateEditBusinessDialog({
     setTimeout(() => {
       setFormData(DEFAULT_FORM)
       businessMutation.reset()
+      setIsConfirmOpen(false)
     }, 300)
   }
 
@@ -134,7 +140,7 @@ export function CreateEditBusinessDialog({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    businessMutation.mutate()
+    setIsConfirmOpen(true)
   }
 
   const isOwnerSelectionInvalid =
@@ -383,20 +389,33 @@ export function CreateEditBusinessDialog({
                   <Button
                     type="submit"
                     className="w-full sm:flex-1"
+                    loading={businessMutation.isPending}
+                    loaderLabel={
+                      isEditing ? "Saving changes" : "Creating business"
+                    }
                     disabled={
                       businessMutation.isPending || isOwnerSelectionInvalid
                     }
                   >
-                    {businessMutation.isPending
-                      ? "Saving..."
-                      : isEditing
-                        ? "Save Changes"
-                        : "Create Business"}
+                    {isEditing ? "Save Changes" : "Create Business"}
                   </Button>
                 </div>
               </form>
             </div>
           </motion.div>
+          <ConfirmationDialog
+            isOpen={isConfirmOpen}
+            onClose={() => setIsConfirmOpen(false)}
+            onConfirm={() => businessMutation.mutate()}
+            title={isEditing ? "Save business changes" : "Create business"}
+            description={
+              isEditing
+                ? "This will update the business details and ownership mapping."
+                : "This will create the new business record and assign the selected owners."
+            }
+            confirmLabel={isEditing ? "Save Changes" : "Create Business"}
+            isPending={businessMutation.isPending}
+          />
         </>
       )}
     </AnimatePresence>

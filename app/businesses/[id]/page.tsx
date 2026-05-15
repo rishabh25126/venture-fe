@@ -40,6 +40,11 @@ import { AnimatePresence, motion } from "framer-motion"
 import { getUserFacingErrorMessage } from "@/lib/errors/user-facing-errors"
 
 const tabs = ["Overview", "Team", "Metrics", "Pitch Deck"]
+type BusinessTeamMember = {
+  name: string
+  role: string
+  linkedin?: string
+}
 
 const sectorColors: Record<string, { bg: string; text: string }> = {
   "Food & Beverages": { bg: "bg-[#3B2A00]", text: "text-[#FCD34D]" },
@@ -372,7 +377,7 @@ export default function BusinessProfilePage({
                       Leadership Team
                     </h2>
                     <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-                      {business.team.map((member) => (
+                      {business.team.map((member: BusinessTeamMember) => (
                         <div
                           key={member.name}
                           className="gradient-card rounded-xl border border-border p-5 text-center"
@@ -724,11 +729,10 @@ export default function BusinessProfilePage({
                     <Button
                       type="submit"
                       className="w-full sm:flex-1"
-                      disabled={submitInterest.isPending}
+                      loading={submitInterest.isPending}
+                      loaderLabel="Submitting interest"
                     >
-                      {submitInterest.isPending
-                        ? "Submitting..."
-                        : "Submit Interest"}
+                      Submit Interest
                     </Button>
                   </div>
                 </form>

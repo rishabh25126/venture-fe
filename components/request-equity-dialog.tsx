@@ -255,11 +255,11 @@ export function RequestEquityDialog({
                     <Button
                       type="submit"
                       className="w-full"
+                      loading={submitRequest.isPending}
+                      loaderLabel="Submitting request"
                       disabled={submitRequest.isPending || !formData.businessId}
                     >
-                      {submitRequest.isPending
-                        ? "Submitting..."
-                        : "Submit Request"}
+                      Submit Request
                     </Button>
                   </div>
                 </form>

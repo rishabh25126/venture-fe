@@ -53,7 +53,11 @@ export default function LoginPage() {
       setApiToken(accessToken)
       dispatch(setCredentials({ user, accessToken }))
 
-      if (user.role === "admin" || user.role === "owner") {
+      if (
+        user.baseRole === "super_admin" ||
+        user.baseRole === "admin" ||
+        user.baseRole === "owner"
+      ) {
         router.push("/admin")
       } else {
         router.push("/dashboard")
@@ -221,9 +225,10 @@ export default function LoginPage() {
             <Button
               type="submit"
               className="w-full h-11"
-              disabled={isSubmitting}
+              loading={isSubmitting}
+              loaderLabel="Signing in"
             >
-              {isSubmitting ? "Signing in..." : "Sign In"}
+              Sign In
             </Button>
           </form>
 

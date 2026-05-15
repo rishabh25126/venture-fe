@@ -1,16 +1,35 @@
-import { Loader2Icon } from "lucide-react"
+"use client"
 
+import { Bouncy } from "ldrs/react"
+import "ldrs/react/Bouncy.css"
 import { cn } from "@/lib/utils"
 
-function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
+type SpinnerProps = {
+  className?: string
+  size?: number
+  color?: string
+  speed?: number
+  "aria-label"?: string
+}
+
+const DEFAULT_SPINNER_COLOR = "hsl(var(--primary))"
+
+function Spinner({
+  className,
+  size = 18,
+  color = DEFAULT_SPINNER_COLOR,
+  speed = 1.3,
+  "aria-label": ariaLabel = "Loading",
+}: SpinnerProps) {
   return (
-    <Loader2Icon
+    <span
       role="status"
-      aria-label="Loading"
-      className={cn("size-4 animate-spin", className)}
-      {...props}
-    />
+      aria-label={ariaLabel}
+      className={cn("inline-flex items-center justify-center", className)}
+    >
+      <Bouncy size={size} color={color} speed={speed} />
+    </span>
   )
 }
 
-export { Spinner }
+export { Spinner, DEFAULT_SPINNER_COLOR }

@@ -3,7 +3,7 @@ import type { User } from "@/lib/features/auth/authSlice"
 export type AppRole = User["role"]
 
 export function getDashboardHref(role?: AppRole | null) {
-  if (role === "admin" || role === "owner") {
+  if (role === "admin" || role === "owner" || role === "super_admin") {
     return "/admin"
   }
 
@@ -46,12 +46,12 @@ function getRouteKind(pathname: string): RouteKind {
 
   if (
     pathname === "/dashboard" ||
-    /^\/dashboard\/businesses\/[^/]+$/.test(pathname)
+    pathname.startsWith("/dashboard/")
   ) {
     return "investor"
   }
 
-  if (pathname === "/admin") {
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
     return "manager"
   }
 
@@ -74,12 +74,15 @@ export function isRouteAllowed(pathname: string, user: User | null) {
   }
 
   if (routeKind === "investor") {
-    return { allowed: user.role === "investor", routeKind }
+    return { allowed: user.baseRole === "investor", routeKind }
   }
 
   if (routeKind === "manager") {
     return {
-      allowed: user.role === "admin" || user.role === "owner",
+      allowed:
+        user.baseRole === "super_admin" ||
+        user.baseRole === "admin" ||
+        user.baseRole === "owner",
       routeKind,
     }
   }
